@@ -1,0 +1,407 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../../../luadoc.css" type="text/css" />
+	<!--meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/-->
+</head>
+
+<body>
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+<div id="main">
+
+<div id="navigation">
+
+
+<h1>LuaDoc</h1>
+<ul>
+	
+	<li><a href="../../../index.html">Index</a></li>
+	
+</ul>
+
+
+<!-- Module list -->
+
+
+
+<!-- File list -->
+
+<h1>Files</h1>
+<ul>
+
+	<li>
+		<a href="../../../files/Framework/BDT.html">Framework/BDT.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_DebugConsole/BDT_DebugConsole.html">Framework/BDT_DebugConsole/BDT_DebugConsole.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_GUI/BDT_GUI.html">Framework/BDT_GUI/BDT_GUI.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_GUI/BDT_GUI_Arrangement.html">Framework/BDT_GUI/BDT_GUI_Arrangement.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_GUI/BDT_GUI_CallbackList.html">Framework/BDT_GUI/BDT_GUI_CallbackList.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_GUI/BDT_GUI_Color.html">Framework/BDT_GUI/BDT_GUI_Color.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_GUI/BDT_GUI_Desk.html">Framework/BDT_GUI/BDT_GUI_Desk.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_GUI/BDT_GUI_Sheet.html">Framework/BDT_GUI/BDT_GUI_Sheet.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_GUI/BDT_GUI_SheetContent.html">Framework/BDT_GUI/BDT_GUI_SheetContent.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_GUI/BDT_GUI_SheetRenderer.html">Framework/BDT_GUI/BDT_GUI_SheetRenderer.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_GUI/BDT_GUI_SheetTextContent.html">Framework/BDT_GUI/BDT_GUI_SheetTextContent.lua</a>
+	</li>
+
+	<li><strong>Framework/BDT_Grob/BDT_Grob.lua</strong></li>
+	
+	<li>
+		<a href="../../../files/Framework/BDT_Grob/BDT_Grob_Sprite.html">Framework/BDT_Grob/BDT_Grob_Sprite.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_Turntable/BDT_Turntable.html">Framework/BDT_Turntable/BDT_Turntable.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_Undercart/BDT_Undercart.html">Framework/BDT_Undercart/BDT_Undercart.lua</a>
+	</li>
+
+</ul>
+
+
+
+
+
+
+</div> <!-- id="navigation" -->
+
+<div id="content">
+
+<h1>File <code>Framework/BDT_Grob/BDT_Grob.lua</code></h1>
+
+
+
+
+
+
+
+<h2>Functions</h2>
+<table class="function_list">
+
+	<tr>
+	<td class="name" nowrap><a href="#BDT_GROB.newWorkshop">BDT_GROB.newWorkshop</a>&nbsp;(dir, grobfileName, partialLoading)</td>
+	<td class="summary">Creates a new Workshop (factory for grobs) </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#BDT_GROB.printGrobChildren">BDT_GROB.printGrobChildren</a>&nbsp;(grob)</td>
+	<td class="summary">Prints children of the supplied grob; Debug utility.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#BDT_GROB.zInsertSort">BDT_GROB.zInsertSort</a>&nbsp;(t)</td>
+	<td class="summary">An implementation of the sorting function, using insert-sort algorithm.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:attachChild">Grob:attachChild</a>&nbsp;(self, subGrob, pegIndexOrName)</td>
+	<td class="summary">Attaches a child to any grob.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:childAdded">Grob:childAdded</a>&nbsp;(grob, drawPriority)</td>
+	<td class="summary">Callback to notify the root grob about new sub-grob.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:childRemoved">Grob:childRemoved</a>&nbsp;(self, grobReference)</td>
+	<td class="summary">Callback to notify the root grob about removed sub-grob </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:childRemoved">Grob:childRemoved</a>&nbsp;(self, grobReference)</td>
+	<td class="summary">Callback to notify the root grob about removed sub-grob </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:draw">Grob:draw</a>&nbsp;(x, y)</td>
+	<td class="summary">Renders the grob </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:drawPoints">Grob:drawPoints</a>&nbsp;(self, screenX, screenY)</td>
+	<td class="summary">Visualizes pivot and peg points.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:getAngleDegrees">Grob:getAngleDegrees</a>&nbsp;(self)</td>
+	<td class="summary">Angle getter function </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:getAngleRadians">Grob:getAngleRadians</a>&nbsp;(self)</td>
+	<td class="summary">Angle getter function </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:getChild">Grob:getChild</a>&nbsp;(pegIndexOrName)</td>
+	<td class="summary">Fetches a child grob.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:getFullImageArea">Grob:getFullImageArea</a>&nbsp;(self, none)</td>
+	<td class="summary">Returns <x1, y1, x2, y2> the union of areas occupied by grobs in a given hierarchy </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:getImageArea">Grob:getImageArea</a>&nbsp;(none)</td>
+	<td class="summary">returns <x1, y1, x2, y2>, area which this grob visually occupies on the map (in pixels); Only considers one grob, even if it's the root; To get the complete area occupied by a grob hierarchy, use RootGrob__getFullImageArea() </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:getImageArea">Grob:getImageArea</a>&nbsp;(none)</td>
+	<td class="summary">returns <x1, y1, x2, y2>, area which this grob visually occupies on the map (in pixels); Only considers one grob, even if it's the root; To get the complete area occupied by a grob hierarchy, use RootGrob__getFullImageArea() </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:getImageArea">Grob:getImageArea</a>&nbsp;(none)</td>
+	<td class="summary">returns <x1, y1, x2, y2>, area which this grob visually occupies on the map (in pixels); Only considers one grob, even if it's the root; To get the complete area occupied by a grob hierarchy, use RootGrob__getFullImageArea() </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:getMaxImageArea">Grob:getMaxImageArea</a>&nbsp;(self, none)</td>
+	<td class="summary">returns <x1, y1, x2, y2>, area which this grob hierarchy can eventually ocuppy, considering all posible angles of all grobs.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:getMaxImageArea">Grob:getMaxImageArea</a>&nbsp;(self, none)</td>
+	<td class="summary">returns <x1, y1, x2, y2>, area which this grob hierarchy can eventually ocuppy, considering all posible angles of all grobs.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:getPeg">Grob:getPeg</a>&nbsp;(self, pegIndexOrName)</td>
+	<td class="summary">Returns a reference to grob's internal pegs table; should be private </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:getPegCount">Grob:getPegCount</a>&nbsp;(self)</td>
+	<td class="summary">Returns number of pegs.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:getPegIndex">Grob:getPegIndex</a>&nbsp;(self, pegIndexOrName, pegName)</td>
+	<td class="summary">Querries a peg index by name.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:getPegOffset">Grob:getPegOffset</a>&nbsp;(self, pegIndexOrName)</td>
+	<td class="summary">Returns peg's offset from grob's pivot point </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:getPegPosition">Grob:getPegPosition</a>&nbsp;(pegIndexOrName)</td>
+	<td class="summary">returns <x,y,h> absolute map position of a grob's peg, plus its height </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:getPegRootOffset">Grob:getPegRootOffset</a>&nbsp;(pegIndexOrName)</td>
+	<td class="summary">returns <x,y,h> peg's offset from the root grob's pivot </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:getPosition">Grob:getPosition</a>&nbsp;(self, none)</td>
+	<td class="summary">Returns <x,y,h> the grob's map position (in pixels) </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:getPosition">Grob:getPosition</a>&nbsp;(self, none)</td>
+	<td class="summary">Returns <x,y,h> the grob's map position (in pixels) </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:getPosition">Grob:getPosition</a>&nbsp;(self, none)</td>
+	<td class="summary">Returns <x,y,h> the grob's map position (in pixels) </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:getPositionXY">Grob:getPositionXY</a>&nbsp;(none)</td>
+	<td class="summary">Returns <x,y> the map position (in pixels).</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:getVisualAngleDegrees">Grob:getVisualAngleDegrees</a>&nbsp;(self, none)</td>
+	<td class="summary">Get the angle of the current sprite </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:getVisualAngleIndex">Grob:getVisualAngleIndex</a>&nbsp;(self)</td>
+	<td class="summary">Returns index of current visual angle </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:getVisualAngleRadians">Grob:getVisualAngleRadians</a>&nbsp;(self, none)</td>
+	<td class="summary">Get the angle of the current sprite </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:removeChild">Grob:removeChild</a>&nbsp;(self, grobReference)</td>
+	<td class="summary">Removes a child grob </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:rotateDegrees">Grob:rotateDegrees</a>&nbsp;(self, deltaAngle, updateChildGrobs)</td>
+	<td class="summary">Rotation function; Updates the grob's angle and spriteIndex </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:rotateRadians">Grob:rotateRadians</a>&nbsp;(self, deltaAngle, updateChildGrobs)</td>
+	<td class="summary">Rotation function; Updates the grob's angle and spriteIndex; frontend to 'rotateDegrees' </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:setAngleDegrees">Grob:setAngleDegrees</a>&nbsp;(self, angle)</td>
+	<td class="summary">Angle setter function (uses rotation function, rotates in positive dir).</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:setAngleRadians">Grob:setAngleRadians</a>&nbsp;(self, angle)</td>
+	<td class="summary">Angle setter function (uses rotation function, rotates in positive dir); Frontend to setAngleDegrees().</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:setDisplacement">Grob:setDisplacement</a>&nbsp;(self, none)</td>
+	<td class="summary">Sets displacement between this SubGrob and the peg it's mounted to.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:setDisplacement">Grob:setDisplacement</a>&nbsp;(self, none)</td>
+	<td class="summary">Sets displacement between this SubGrob and the peg it's mounted to.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Grob:updateZ">Grob:updateZ</a>&nbsp;(self, none)</td>
+	<td class="summary">Calculates the Z-index for this grob.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#RootGrob:attachChild">RootGrob:attachChild</a>&nbsp;(self, subGrob, pegIndexOrName, drawPriority)</td>
+	<td class="summary">Attaches a child to root grob.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#RootGrob:childAdded">RootGrob:childAdded</a>&nbsp;(self, grob, drawPriority)</td>
+	<td class="summary">Callback; Recieves a notification from subgrob and inserts the new grob into "drawingOrder" list.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#RootGrob:getPegPosition">RootGrob:getPegPosition</a>&nbsp;(self, pegIndexOrName)</td>
+	<td class="summary">returns <x,y,h> absolute map position of a grob's peg, plus its height </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#RootGrob:getShade">RootGrob:getShade</a>&nbsp;(pegIndexOrName)</td>
+	<td class="summary">returns <x,y,w,h> the shade's map coordinates and size (in pixels).</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#RootGrob:removeChild">RootGrob:removeChild</a>&nbsp;(self, grobReference)</td>
+	<td class="summary">Removes a child grob </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#RootGrob:setAngleRadians">RootGrob:setAngleRadians</a>&nbsp;(self, angle, affectChildren)</td>
+	<td class="summary">Angle setter function (uses rotation function, rotates in positive dir); Frontend to setAngleDegrees().</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#RootGrob__getImageArea_AreaPerSprite">RootGrob__getImageArea_AreaPerSprite</a>&nbsp;(self)</td>
+	<td class="summary">Implementation of 'Grob:getImageArea' for multiple image areas.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#RootGrob__getImageArea_SingleArea">RootGrob__getImageArea_SingleArea</a>&nbsp;(self)</td>
+	<td class="summary">Implementation of 'Grob:getImageArea' for single image area.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#RootGrob__getMaxImageArea_AreaPerSprite">RootGrob__getMaxImageArea_AreaPerSprite</a>&nbsp;(self)</td>
+	<td class="summary">Implementation of 'Grob:getImageArea' for multiple image areas.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#RootGrob__getShade_ShadePerSprite">RootGrob__getShade_ShadePerSprite</a>&nbsp;(self)</td>
+	<td class="summary">Implementation of 'getShade' for multiple shades.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#RootGrob__getShade_SingleShade">RootGrob__getShade_SingleShade</a>&nbsp;(self)</td>
+	<td class="summary">Implementation of 'getShade' for single shade.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#SubGrob:attachChild">SubGrob:attachChild</a>&nbsp;(self, subGrob, pegIndexOrName, drawPriority)</td>
+	<td class="summary">Attaches a child to sub grob.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#SubGrob:childAdded">SubGrob:childAdded</a>&nbsp;(self, grob, drawPriority)</td>
+	<td class="summary">Callback; Recieves a notification from subgrob and if the child should be drawn, passes it on.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#SubGrob:childRemoved">SubGrob:childRemoved</a>&nbsp;(self, grobReference)</td>
+	<td class="summary">Callback to notify the root grob about removed sub-grob </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#SubGrob:getOffset">SubGrob:getOffset</a>&nbsp;(self, none)</td>
+	<td class="summary">Returns absolute map position of parent grob's peg this sub grob is mounted to.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#SubGrob:getOffset">SubGrob:getOffset</a>&nbsp;(self, none)</td>
+	<td class="summary">Returns absolute map position of parent grob's peg this sub grob is mounted to.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#SubGrob:getPegPosition">SubGrob:getPegPosition</a>&nbsp;(self, pegIndexOrName)</td>
+	<td class="summary">returns <x,y,h> absolute map position of a grob's peg, plus its height </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#SubGrob:getPegRootOffset">SubGrob:getPegRootOffset</a>&nbsp;(self, pegIndexOrName)</td>
+	<td class="summary">Returns <x,y,h> peg's offset from the root grob's pivot </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#SubGrob:getShade">SubGrob:getShade</a>&nbsp;(

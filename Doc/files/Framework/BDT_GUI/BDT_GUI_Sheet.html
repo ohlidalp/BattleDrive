@@ -1,0 +1,940 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../../../luadoc.css" type="text/css" />
+	<!--meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/-->
+</head>
+
+<body>
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+<div id="main">
+
+<div id="navigation">
+
+
+<h1>LuaDoc</h1>
+<ul>
+	
+	<li><a href="../../../index.html">Index</a></li>
+	
+</ul>
+
+
+<!-- Module list -->
+
+
+
+<!-- File list -->
+
+<h1>Files</h1>
+<ul>
+
+	<li>
+		<a href="../../../files/Framework/BDT.html">Framework/BDT.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_DebugConsole/BDT_DebugConsole.html">Framework/BDT_DebugConsole/BDT_DebugConsole.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_GUI/BDT_GUI.html">Framework/BDT_GUI/BDT_GUI.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_GUI/BDT_GUI_Arrangement.html">Framework/BDT_GUI/BDT_GUI_Arrangement.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_GUI/BDT_GUI_CallbackList.html">Framework/BDT_GUI/BDT_GUI_CallbackList.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_GUI/BDT_GUI_Color.html">Framework/BDT_GUI/BDT_GUI_Color.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_GUI/BDT_GUI_Desk.html">Framework/BDT_GUI/BDT_GUI_Desk.lua</a>
+	</li>
+
+	<li><strong>Framework/BDT_GUI/BDT_GUI_Sheet.lua</strong></li>
+	
+	<li>
+		<a href="../../../files/Framework/BDT_GUI/BDT_GUI_SheetContent.html">Framework/BDT_GUI/BDT_GUI_SheetContent.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_GUI/BDT_GUI_SheetRenderer.html">Framework/BDT_GUI/BDT_GUI_SheetRenderer.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_GUI/BDT_GUI_SheetTextContent.html">Framework/BDT_GUI/BDT_GUI_SheetTextContent.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_Grob/BDT_Grob.html">Framework/BDT_Grob/BDT_Grob.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_Grob/BDT_Grob_Sprite.html">Framework/BDT_Grob/BDT_Grob_Sprite.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_Turntable/BDT_Turntable.html">Framework/BDT_Turntable/BDT_Turntable.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_Undercart/BDT_Undercart.html">Framework/BDT_Undercart/BDT_Undercart.lua</a>
+	</li>
+
+</ul>
+
+
+
+
+
+
+</div> <!-- id="navigation" -->
+
+<div id="content">
+
+<h1>File <code>Framework/BDT_GUI/BDT_GUI_Sheet.lua</code></h1>
+
+
+
+
+
+
+
+<h2>Functions</h2>
+<table class="function_list">
+
+	<tr>
+	<td class="name" nowrap><a href="#BDT_GUI.isInstanceOfSheet">BDT_GUI.isInstanceOfSheet</a>&nbsp;(o)</td>
+	<td class="summary">Checks if supplied object is a Sheet </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Sheet:addEventHandler">Sheet:addEventHandler</a>&nbsp;(eventType, handler)</td>
+	<td class="summary">Registers an event handler with this sheet.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Sheet:attachRenderer">Sheet:attachRenderer</a>&nbsp;(r)</td>
+	<td class="summary">Associates a renderer object with this sheet.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Sheet:dragEvent">Sheet:dragEvent</a>&nbsp;(mouseNewX, mouseNewY, mouseOldX, mouseOldY, buttons)</td>
+	<td class="summary">Notifies this sheet that it was mouse-dragged.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Sheet:getCorners">Sheet:getCorners</a>&nbsp;()</td>
+	<td class="summary">Returns the screen position of this sheet.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Sheet:hasChildren">Sheet:hasChildren</a>&nbsp;()</td>
+	<td class="summary">Tells if this sheet has any children.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Sheet:isInside">Sheet:isInside</a>&nbsp;(x, y, w, h)</td>
+	<td class="summary">Checks whether the supplied rectangle is inside this sheet.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Sheet:mouseDownEvent">Sheet:mouseDownEvent</a>&nbsp;(x, y, button)</td>
+	<td class="summary">Notifies this sheet that a mouse button was pressed above it.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Sheet:mouseMoved">Sheet:mouseMoved</a>&nbsp;(mouseNewX, mouseNewY, mouseOldX, mouseOldY)</td>
+	<td class="summary">A callback for a mouse motion event.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Sheet:mouseOutEvent">Sheet:mouseOutEvent</a>&nbsp;()</td>
+	<td class="summary">Notifies this sheet that a mouse was removed from it.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Sheet:mouseOverEvent">Sheet:mouseOverEvent</a>&nbsp;()</td>
+	<td class="summary">Notifies this sheet that a mouse was positioned above it.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Sheet:mouseUpEvent">Sheet:mouseUpEvent</a>&nbsp;(x, y, button)</td>
+	<td class="summary">Notifies this sheet that a mouse button was released above it.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Sheet:move">Sheet:move</a>&nbsp;(moveX, moveY)</td>
+	<td class="summary">Move the sheet and notify child sheets.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Sheet:newSheet">Sheet:newSheet</a>&nbsp;(_relativePosX, _relativePosY, _width, _height, _parentChanged, _horizontalAnchor, _verticalAnchor)</td>
+	<td class="summary">Creates a new Sheet object as a child of this sheet.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Sheet:removeAllSheets">Sheet:removeAllSheets</a>&nbsp;(none)</td>
+	<td class="summary">Detaches all child sheets from this sheet.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Sheet:removeEventHandler">Sheet:removeEventHandler</a>&nbsp;(eventType, handler)</td>
+	<td class="summary">Unregisters an event handler with this sheet.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Sheet:removeSheet">Sheet:removeSheet</a>&nbsp;(indexOrPointer)</td>
+	<td class="summary">Detaches a sheet object from this sheet.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Sheet:resize">Sheet:resize</a>&nbsp;(horizontalChange, verticalChange, verticalEdge, horizontalEdge)</td>
+	<td class="summary">Resize this sheet by dragging an edge.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Sheet:setActive">Sheet:setActive</a>&nbsp;(v)</td>
+	<td class="summary">(De)activates this sheet.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Sheet:toString">Sheet:toString</a>&nbsp;()</td>
+	<td class="summary">Returns text description of this object.</td>
+	</tr>
+
+</table>
+
+
+
+
+<h2>Tables</h2>
+<table class="table_list">
+
+	<tr>
+	<td class="name" nowrap><a href="#class Sheet">class Sheet</a></td>
+	<td class="summary">Sheet is an universal container; It is movable and scalable, can create hierarchies; Can serve as a window, panel, button, scrollbar, whatever...</td>
+	</tr>
+
+</table>
+
+
+
+<br/>
+<br/>
+
+
+
+
+<h2><a name="functions"></a>Functions</h2>
+<dl class="function">
+
+
+
+<dt><a name="BDT_GUI.isInstanceOfSheet"></a><strong>BDT_GUI.isInstanceOfSheet</strong>&nbsp;(o)</dt>
+<dd>
+Checks if supplied object is a Sheet
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  o: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+boolean True if it's a sheet. 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="Sheet:addEventHandler"></a><strong>Sheet:addEventHandler</strong>&nbsp;(eventType, handler)</dt>
+<dd>
+Registers an event handler with this sheet.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  eventType: number Item of BDT_GUI.events enum
+	</li>
+	
+	<li>
+	  handler: Either a function or a table with "run" method; When executed, the value gets the sheet as argument. 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="Sheet:attachRenderer"></a><strong>Sheet:attachRenderer</strong>&nbsp;(r)</dt>
+<dd>
+Associates a renderer object with this sheet.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  r: SheetRenderer 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="Sheet:dragEvent"></a><strong>Sheet:dragEvent</strong>&nbsp;(mouseNewX, mouseNewY, mouseOldX, mouseOldY, buttons)</dt>
+<dd>
+Notifies this sheet that it was mouse-dragged.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  mouseNewX: Mouse screen position
+	</li>
+	
+	<li>
+	  mouseNewY: Mouse screen position
+	</li>
+	
+	<li>
+	  mouseOldX: Mouse screen position
+	</li>
+	
+	<li>
+	  mouseOldY: Mouse screen position
+	</li>
+	
+	<li>
+	  buttons: table{left,middle,right} 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="Sheet:getCorners"></a><strong>Sheet:getCorners</strong>&nbsp;()</dt>
+<dd>
+Returns the screen position of this sheet.
+
+
+
+
+
+
+
+<h3>Return value:</h3>
+<x,y,w,h> Absolute screen dimensions of this sheet (in pixels). 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="Sheet:hasChildren"></a><strong>Sheet:hasChildren</strong>&nbsp;()</dt>
+<dd>
+Tells if this sheet has any children.
+
+
+
+
+
+
+
+<h3>Return value:</h3>
+Boolean; True if there are child sheets. 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="Sheet:isInside"></a><strong>Sheet:isInside</strong>&nbsp;(x, y, w, h)</dt>
+<dd>
+Checks whether the supplied rectangle is inside this sheet.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  x: Rectangle's absolute position in pixels
+	</li>
+	
+	<li>
+	  y: Rectangle's absolute position in pixels
+	</li>
+	
+	<li>
+	  w: Rectangle's witdth in pixels
+	</li>
+	
+	<li>
+	  h: Rectangle's height in pixels
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="Sheet:mouseDownEvent"></a><strong>Sheet:mouseDownEvent</strong>&nbsp;(x, y, button)</dt>
+<dd>
+Notifies this sheet that a mouse button was pressed above it.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  x: Mouse screen position
+	</li>
+	
+	<li>
+	  y: Mouse screen position
+	</li>
+	
+	<li>
+	  button: The button. 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="Sheet:mouseMoved"></a><strong>Sheet:mouseMoved</strong>&nbsp;(mouseNewX, mouseNewY, mouseOldX, mouseOldY)</dt>
+<dd>
+A callback for a mouse motion event. LOVE 0.6.x does not contain motion event, only button press event. Maybe it will be added in the future, for now it must be called by the user.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  mouseNewX: New mouse coordinate in pixels
+	</li>
+	
+	<li>
+	  mouseNewY: New mouse coordinate in pixels
+	</li>
+	
+	<li>
+	  mouseOldX: Old mouse coordinate in pixels
+	</li>
+	
+	<li>
+	  mouseOldY: Old mouse coordinate in pixels
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+Table(Sheet) Pointer to sheet pointed by cursor, nil if no sheet is pointed. 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="Sheet:mouseOutEvent"></a><strong>Sheet:mouseOutEvent</strong>&nbsp;()</dt>
+<dd>
+Notifies this sheet that a mouse was removed from it. 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="Sheet:mouseOverEvent"></a><strong>Sheet:mouseOverEvent</strong>&nbsp;()</dt>
+<dd>
+Notifies this sheet that a mouse was positioned above it. 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="Sheet:mouseUpEvent"></a><strong>Sheet:mouseUpEvent</strong>&nbsp;(x, y, button)</dt>
+<dd>
+Notifies this sheet that a mouse button was released above it.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  x: Mouse screen position
+	</li>
+	
+	<li>
+	  y: Mouse screen position
+	</li>
+	
+	<li>
+	  button: The button. 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="Sheet:move"></a><strong>Sheet:move</strong>&nbsp;(moveX, moveY)</dt>
+<dd>
+Move the sheet and notify child sheets.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  moveX: Number - movement offset
+	</li>
+	
+	<li>
+	  moveY: Number - movement offset 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="Sheet:newSheet"></a><strong>Sheet:newSheet</strong>&nbsp;(_relativePosX, _relativePosY, _width, _height, _parentChanged, _horizontalAnchor, _verticalAnchor)</dt>
+<dd>
+Creates a new Sheet object as a child of this sheet.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  _relativePosX: Offset from parent element in pixels
+	</li>
+	
+	<li>
+	  _relativePosY: Offset from parent element in pixels
+	</li>
+	
+	<li>
+	  _width: Sheet's witdth in pixels
+	</li>
+	
+	<li>
+	  _height: Sheet's height in pixels
+	</li>
+	
+	<li>
+	  _parentChanged: Function specifying how this sheet will react to moving and resizing of it's parent @see BDT_GUI.Arrange
+	</li>
+	
+	<li>
+	  _horizontalAnchor: A boolean value specifying how this element will be anchored. @see BDT_GUI.edges enum.
+	</li>
+	
+	<li>
+	  _verticalAnchor: A boolean value specifying how this element will be anchored. @see BDT_GUI.edges enum.
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+Sheet object 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="Sheet:removeAllSheets"></a><strong>Sheet:removeAllSheets</strong>&nbsp;(none)</dt>
+<dd>
+Detaches all child sheets from this sheet.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  none: nil 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="Sheet:removeEventHandler"></a><strong>Sheet:removeEventHandler</strong>&nbsp;(eventType, handler)</dt>
+<dd>
+Unregisters an event handler with this sheet.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  eventType: number Item of BDT_GUI.events enum
+	</li>
+	
+	<li>
+	  handler: The handler object/function to remove
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+boolean True if the object was removed, false if not found 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="Sheet:removeSheet"></a><strong>Sheet:removeSheet</strong>&nbsp;(indexOrPointer)</dt>
+<dd>
+Detaches a sheet object from this sheet.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  indexOrPointer: A numeric index or a pointer to the sheet which should be removed. 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="Sheet:resize"></a><strong>Sheet:resize</strong>&nbsp;(horizontalChange, verticalChange, verticalEdge, horizontalEdge)</dt>
+<dd>
+Resize this sheet by dragging an edge.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  horizontalChange: Number - how many pixels were added/removed from horizontal size
+	</li>
+	
+	<li>
+	  verticalChange: Number - how many pixels were added/removed from horizontal size
+	</li>
+	
+	<li>
+	  verticalEdge: Enum(edges) - specifies which edge is being dragged.
+	</li>
+	
+	<li>
+	  horizontalEdge: Enum(edges) - specifies which edge is being dragged. 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="Sheet:setActive"></a><strong>Sheet:setActive</strong>&nbsp;(v)</dt>
+<dd>
+(De)activates this sheet. Only active sheet responds to mouse.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  v: boolean Activity value. 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="Sheet:toString"></a><strong>Sheet:toString</strong>&nbsp;()</dt>
+<dd>
+Returns text description of this object. 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+</dl>
+
+
+
+
+<h2><a name="tables"></a>Tables</h2>
+<dl class="table">
+
+<dt><a name="class Sheet"></a><strong>class Sheet</strong></dt>
+<dd>Sheet is an universal container; It is movable and scalable, can create hierarchies; Can serve as a window, panel, button, scrollbar, whatever...
+
+
+<em>Fields</em>
+<ul>
+	
+	<li>
+	  relativePos: Table {x,y} - Position relative to parent sheet (in pixels)
+	</li>
+	
+	<li>
+	  absolutePos: Table {x,y} - Sheet's position relative to it's ancestor node; The coordinates are always relative to top left corner, no matter how the sheet is anchored.
+	</li>
+	
+	<li>
+	  anchor: Table { horizontal, vertical } - This sheet's anchors. Defaults: TOP, LEFT
+	</li>
+	
+	<li>
+	  anchor.horizontal: edges.LEFT or edges.RIGHT
+	</li>
+	
+	<li>
+	  anchor.vertical: edges.TOP or edges.BOTTOM
+	</li>
+	
+	<li>
+	  onMouseOver: Table(CallbackList)
+	</li>
+	
+	<li>
+	  onMouseOut: Table(CallbackList)
+	</li>
+	
+	<li>
+	  onMouseDown: Table(CallbackList)
+	</li>
+	
+	<li>
+	  onMouseUp: Table(CallbackList)
+	</li>
+	
+	<li>
+	  onDrag: Table(CallbackList)
+	</li>
+	
+	<li>
+	  renderer: Table(SheetRenderer)
+	</li>
+	
+	<li>
+	  mouseIsOver: Boolean - Flags if mouse is hovering this sheet.
+	</li>
+	
+	<li>
+	  mouseIsDown: Boolean - Flags if mouse is being pressed above this sheet.
+	</li>
+	
+	<li>
+	  parentChanged: Function - Callback which updates this sheet's position and size if parent element was somehow changed.
+	</li>
+	
+	<li>
+	  name: string Sheet name 
+	</li>
+	
+</ul>
+
+
+</dd>
+
+
+</dl>
+
+
+
+
+</div> <!-- id="content" -->
+
+</div> <!-- id="main" -->
+
+<div id="about">
+	<p><a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0!" height="31" width="88" /></a></p>
+</div> <!-- id="about" -->
+
+</div> <!-- id="container" -->	
+</body>
+</html>

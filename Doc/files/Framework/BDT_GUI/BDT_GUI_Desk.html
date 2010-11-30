@@ -1,0 +1,513 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../../../luadoc.css" type="text/css" />
+	<!--meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/-->
+</head>
+
+<body>
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+<div id="main">
+
+<div id="navigation">
+
+
+<h1>LuaDoc</h1>
+<ul>
+	
+	<li><a href="../../../index.html">Index</a></li>
+	
+</ul>
+
+
+<!-- Module list -->
+
+
+
+<!-- File list -->
+
+<h1>Files</h1>
+<ul>
+
+	<li>
+		<a href="../../../files/Framework/BDT.html">Framework/BDT.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_DebugConsole/BDT_DebugConsole.html">Framework/BDT_DebugConsole/BDT_DebugConsole.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_GUI/BDT_GUI.html">Framework/BDT_GUI/BDT_GUI.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_GUI/BDT_GUI_Arrangement.html">Framework/BDT_GUI/BDT_GUI_Arrangement.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_GUI/BDT_GUI_CallbackList.html">Framework/BDT_GUI/BDT_GUI_CallbackList.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_GUI/BDT_GUI_Color.html">Framework/BDT_GUI/BDT_GUI_Color.lua</a>
+	</li>
+
+	<li><strong>Framework/BDT_GUI/BDT_GUI_Desk.lua</strong></li>
+	
+	<li>
+		<a href="../../../files/Framework/BDT_GUI/BDT_GUI_Sheet.html">Framework/BDT_GUI/BDT_GUI_Sheet.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_GUI/BDT_GUI_SheetContent.html">Framework/BDT_GUI/BDT_GUI_SheetContent.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_GUI/BDT_GUI_SheetRenderer.html">Framework/BDT_GUI/BDT_GUI_SheetRenderer.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_GUI/BDT_GUI_SheetTextContent.html">Framework/BDT_GUI/BDT_GUI_SheetTextContent.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_Grob/BDT_Grob.html">Framework/BDT_Grob/BDT_Grob.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_Grob/BDT_Grob_Sprite.html">Framework/BDT_Grob/BDT_Grob_Sprite.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_Turntable/BDT_Turntable.html">Framework/BDT_Turntable/BDT_Turntable.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/Framework/BDT_Undercart/BDT_Undercart.html">Framework/BDT_Undercart/BDT_Undercart.lua</a>
+	</li>
+
+</ul>
+
+
+
+
+
+
+</div> <!-- id="navigation" -->
+
+<div id="content">
+
+<h1>File <code>Framework/BDT_GUI/BDT_GUI_Desk.lua</code></h1>
+
+
+
+
+
+
+
+<h2>Functions</h2>
+<table class="function_list">
+
+	<tr>
+	<td class="name" nowrap><a href="#BDT_GUI.newDesk">BDT_GUI.newDesk</a>&nbsp;()</td>
+	<td class="summary">Constructor of 'Desk' instances  </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Desk:attachSheet">Desk:attachSheet</a>&nbsp;(s)</td>
+	<td class="summary">Attaches a sheet into the tree.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Desk:draw">Desk:draw</a>&nbsp;()</td>
+	<td class="summary">Draws the GUI  </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Desk:getPointedSheet">Desk:getPointedSheet</a>&nbsp;()</td>
+	<td class="summary">Fetches the Sheet which mouse currently points to </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Desk:mouseMoved">Desk:mouseMoved</a>&nbsp;(newX, newY, oldX, oldY)</td>
+	<td class="summary">A callback for a mouse motion event.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Desk:mousePressed">Desk:mousePressed</a>&nbsp;(x, y, button)</td>
+	<td class="summary">Mouse button press or mouse wheel turn callback.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Desk:mouseReleased">Desk:mouseReleased</a>&nbsp;(x, y, button)</td>
+	<td class="summary">Mouse button release callback.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Desk:newSheet">Desk:newSheet</a>&nbsp;(_relativePosX, _relativePosY, _width, _height, _parentChanged, _horizontalAnchor, _verticalAnchor)</td>
+	<td class="summary">Creates a new Sheet object as a child of this desk.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#Desk:removeSheet">Desk:removeSheet</a>&nbsp;(indexOrPointer)</td>
+	<td class="summary">Detaches a sheet object from this desk.</td>
+	</tr>
+
+</table>
+
+
+
+
+<h2>Tables</h2>
+<table class="table_list">
+
+	<tr>
+	<td class="name" nowrap><a href="#class Desk">class Desk</a></td>
+	<td class="summary">A Desk object is a root element of the sheet hierarchy; Also serves as a GUI manager object.</td>
+	</tr>
+
+</table>
+
+
+
+<br/>
+<br/>
+
+
+
+
+<h2><a name="functions"></a>Functions</h2>
+<dl class="function">
+
+
+
+<dt><a name="BDT_GUI.newDesk"></a><strong>BDT_GUI.newDesk</strong>&nbsp;()</dt>
+<dd>
+Constructor of 'Desk' instances 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="Desk:attachSheet"></a><strong>Desk:attachSheet</strong>&nbsp;(s)</dt>
+<dd>
+Attaches a sheet into the tree.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  s: Sheet The sheet. 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="Desk:draw"></a><strong>Desk:draw</strong>&nbsp;()</dt>
+<dd>
+Draws the GUI 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="Desk:getPointedSheet"></a><strong>Desk:getPointedSheet</strong>&nbsp;()</dt>
+<dd>
+Fetches the Sheet which mouse currently points to
+
+
+
+
+
+
+
+<h3>Return value:</h3>
+table 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="Desk:mouseMoved"></a><strong>Desk:mouseMoved</strong>&nbsp;(newX, newY, oldX, oldY)</dt>
+<dd>
+A callback for a mouse motion event. LOVE 0.6.x does not contain motion event, only button press event. Maybe it will be added in the future, for now it must be called by the user.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  newX: New mouse coordinate in pixels
+	</li>
+	
+	<li>
+	  newY: New mouse coordinate in pixels
+	</li>
+	
+	<li>
+	  oldX: Old mouse coordinate in pixels
+	</li>
+	
+	<li>
+	  oldY: Old mouse coordinate in pixels 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="Desk:mousePressed"></a><strong>Desk:mousePressed</strong>&nbsp;(x, y, button)</dt>
+<dd>
+Mouse button press or mouse wheel turn callback.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  x: 
+	</li>
+	
+	<li>
+	  y: 
+	</li>
+	
+	<li>
+	  button: love.mouse.MouseConstant enum value. 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="Desk:mouseReleased"></a><strong>Desk:mouseReleased</strong>&nbsp;(x, y, button)</dt>
+<dd>
+Mouse button release callback.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  x: 
+	</li>
+	
+	<li>
+	  y: 
+	</li>
+	
+	<li>
+	  button: love.mouse.MouseConstant enum value. 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="Desk:newSheet"></a><strong>Desk:newSheet</strong>&nbsp;(_relativePosX, _relativePosY, _width, _height, _parentChanged, _horizontalAnchor, _verticalAnchor)</dt>
+<dd>
+Creates a new Sheet object as a child of this desk.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  _relativePosX: Offset from parent element in pixels
+	</li>
+	
+	<li>
+	  _relativePosY: Offset from parent element in pixels
+	</li>
+	
+	<li>
+	  _width: Sheet's witdth in pixels
+	</li>
+	
+	<li>
+	  _height: Sheet's height in pixels
+	</li>
+	
+	<li>
+	  _parentChanged: Function specifying how this sheet will react to moving and resizing of it's parent @see BDT_GUI.Arrange
+	</li>
+	
+	<li>
+	  _horizontalAnchor: A boolean value specifying how this element will be anchored. @see BDT_GUI.edges enum.
+	</li>
+	
+	<li>
+	  _verticalAnchor: A boolean value specifying how this element will be anchored. @see BDT_GUI.edges enum.
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+Sheet object 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="Desk:removeSheet"></a><strong>Desk:removeSheet</strong>&nbsp;(indexOrPointer)</dt>
+<dd>
+Detaches a sheet object from this desk.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  indexOrPointer: A numeric index or a pointer to the sheet which should be removed. 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+</dl>
+
+
+
+
+<h2><a name="tables"></a>Tables</h2>
+<dl class="table">
+
+<dt><a name="class Desk"></a><strong>class Desk</strong></dt>
+<dd>A Desk object is a root element of the sheet hierarchy; Also serves as a GUI manager object.
+
+
+<em>Fields</em>
+<ul>
+	
+	<li>
+	  buttons: Table; Buttons pressed above the currently pointed sheet
+	</li>
+	
+	<li>
+	  buttons.right: Boolean; tells if right mouse button is pressed
+	</li>
+	
+	<li>
+	  buttons.middle: Boolean; tells if middle mouse button is pressed
+	</li>
+	
+	<li>
+	  buttons.left: Boolean; tells if left mouse button is pressed
+	</li>
+	
+	<li>
+	  pointedSheet: BDT_GUI.Sheet Sheet currently hovered by mouse. 
+	</li>
+	
+</ul>
+
+
+</dd>
+
+
+</dl>
+
+
+
+
+</div> <!-- id="content" -->
+
+</div> <!-- id="main" -->
+
+<div id="about">
+	<p><a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0!" height="31" width="88" /></a></p>
+</div> <!-- id="about" -->
+
+</div> <!-- id="container" -->	
+</body>
+</html>
