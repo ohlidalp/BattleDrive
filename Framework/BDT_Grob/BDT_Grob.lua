@@ -786,6 +786,7 @@ end;
 
 -- screenX, screenY - the screen position to draw the grob to
 local function RootGrob__draw(self, screenX, screenY)
+	local love_graphics_draw = love.graphics.draw;
 	--[[ == Debug ==
 		tabsPrint("<RootGrob__draw "..self.name..">");
 	--]]
@@ -809,7 +810,9 @@ local function RootGrob__draw(self, screenX, screenY)
 		--]]
 		--OLD love.graphics.draw( grob.sprites[grob.spriteIndex], screenX+grobX, screenY+grobY-grobH );
 		local s = grob.sprites[grob.spriteIndex];
-		love.graphics.draw(s.image,screenX+grobX+s.x,screenX+grobY-grobH+s.y);
+		love_graphics_draw(s.image,
+			screenX + grobX + s.x,
+			screenY + (grobY - grobH) + s.y);
 	end;
 end;
 

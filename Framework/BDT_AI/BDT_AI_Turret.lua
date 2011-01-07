@@ -134,7 +134,6 @@ function AI.drawTargetingLines(gfxCamera)
 	love.graphics.setLineWidth(origLineWidth);
 end;
 
-mod.ai = AI;
 end;
 
 -- @param watchzoneAABB Bounding box of the area to patrol (x,y,w,h) in map coordinates (pixels).

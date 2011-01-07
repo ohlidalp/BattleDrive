@@ -4,7 +4,7 @@ local BDT={
 };
 
 function BDT:init(BDT_Dir)
-	self.BDT_Dir=BDT_Dir; -- Without slash
+	self.BDT_Dir = BDT_Dir; -- Without slash
 	self._BDT_Dir = BDT_Dir;
 	self._loaded = {};
 end
@@ -143,3 +143,4 @@ function BDT.checkField(t,index,reqType,errMsg)
 end
 
 return BDT;
+

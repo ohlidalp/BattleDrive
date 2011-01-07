@@ -147,22 +147,14 @@ function Sheet:setName(n)
    self.name=n;
 end
 
--- Constructor
--- Creates new sheet as a child of the current sheet/desk
--- This is a common method for 'sheet' and 'desk' objects.
-function BDT_GUI._newSheet( self,
-		_relativePosX, _relativePosY, _width, _height,
+
+function BDT_GUI._newUnattachedSheet(
+		absoluteX, absoluteY, _width, _height,
 		_parentChanged, _horizontalAnchor,_verticalAnchor,
 		_active )
 
-	local checkArg = BDT.checkArg;
-	checkArg("BDT_GUI._newSheet","_relativePosX",_relativePosX,"number")
-	checkArg("BDT_GUI._newSheet","_relativePosY",_relativePosY,"number")
-	checkArg("BDT_GUI._newSheet","_width",_width,"number")
-	checkArg("BDT_GUI._newSheet","_height",_height,"number")
-
 	local sheet = {
-		parent = self;
+		parent = nil;
 		anchor = {
 			horizontal = _horizontalAnchor or BDT_GUI.edges.TOP;
 			vertical = _verticalAnchor or BDT_GUI.edges.LEFT;
@@ -172,8 +164,8 @@ function BDT_GUI._newSheet( self,
 			y = _relativePosY;
 		};
 		absolutePos = {
-			x = self.absolutePos.x+_relativePosX;
-			y = self.absolutePos.y+_relativePosY;
+			x = absoluteX;
+			y = absoluteY;
 		};
 		w = _width;
 		h = _height;
@@ -188,8 +180,6 @@ function BDT_GUI._newSheet( self,
 	sheet.onDrag = BDT_GUI.newCallbackList( sheet );
 	sheet.renderer = false;
 
-
-
 	sheet.parentChanged =
 			type(_parentChanged) == "function"
 				and _parentChanged
@@ -197,22 +187,63 @@ function BDT_GUI._newSheet( self,
 	--print("<newSheet.parentChanged:>", sheet.parentChanged);
 	setmetatable( sheet, Sheet );
 
-	table.insert(self.sheets, 1, sheet);
-
 	return sheet;
 end;
+
+--
+-- Creates new sheet as a child of the current sheet/desk
+-- This is a common method for 'sheet' and 'desk' objects.
+function BDT_GUI._newSheet(parent,
+		relativeX, relativeY, w, h, parentChangedFn,
+		horizontalAnchor, verticalAnchor, active)
+
+	local checkArg = BDT.checkArg;
+	checkArg("BDT_GUI._newSheet","relativeX",relativeX,"number")
+	checkArg("BDT_GUI._newSheet","relativeY",relativeY,"number")
+	checkArg("BDT_GUI._newSheet","w",w,"number")
+	checkArg("BDT_GUI._newSheet","h",h,"number")
+
+	local absPosX = parent.absolutePos.x + relativeX;
+	local absPosY = parent.absolutePos.y + relativeY;
+	local s = BDT_GUI._newUnattachedSheet(
+		absPosX, absPosY, w, h, parentChangedFn,
+		horizontalAnchor, verticalAnchor, active);
+	table.insert(parent.sheets, 1, s);
+	s.parent = parent;
+	return s;
+end
+
+--------------------------------------------------------------------------------
+-- Creates a new Sheet object.
+-- @name BDT_GUI.newSheet
+-- @class function
+-- @param absoluteX Position
+-- @param absoluteY Position
+-- @param w Sheet's witdth in pixels
+-- @param h Sheet's height in pixels
+-- @param parentChangedFn Function specifying how this sheet will react to moving and resizing of it's parent @see BDT_GUI.Arrange
+-- @param horizontalAnchor A boolean value specifying how this element will be anchored. @see BDT_GUI.edges enum.
+-- @param verticalAnchor A boolean value specifying how this element will be anchored. @see BDT_GUI.edges enum.
+-- @return Sheet object
+--------------------------------------------------------------------------------
+function BDT_GUI.newSheet(
+		absoluteX, absoluteY, w, h, parentChangedFn,
+		horizontalAnchor, verticalAnchor, active)
+	BDT_GUI._newUnattachedSheet(absoluteX, absoluteY, w, h, parentChangedFn,
+		horizontalAnchor, verticalAnchor, active);
+end
 
 --------------------------------------------------------------------------------
 -- Creates a new Sheet object as a child of this sheet.
 -- @name Sheet:newSheet
 -- @class function
--- @param _relativePosX Offset from parent element in pixels
--- @param _relativePosY Offset from parent element in pixels
--- @param _width Sheet's witdth in pixels
--- @param _height Sheet's height in pixels
--- @param _parentChanged Function specifying how this sheet will react to moving and resizing of it's parent @see BDT_GUI.Arrange
--- @param _horizontalAnchor A boolean value specifying how this element will be anchored. @see BDT_GUI.edges enum.
--- @param _verticalAnchor A boolean value specifying how this element will be anchored. @see BDT_GUI.edges enum.
+-- @param relativeX Offset from parent element in pixels
+-- @param relativeY Offset from parent element in pixels
+-- @param w Sheet's witdth in pixels
+-- @param h Sheet's height in pixels
+-- @param parentChangedFn Function specifying how this sheet will react to moving and resizing of it's parent @see BDT_GUI.Arrange
+-- @param horizontalAnchor A boolean value specifying how this element will be anchored. @see BDT_GUI.edges enum.
+-- @param verticalAnchor A boolean value specifying how this element will be anchored. @see BDT_GUI.edges enum.
 -- @return Sheet object
 --------------------------------------------------------------------------------
 Sheet.newSheet = BDT_GUI._newSheet;
@@ -416,6 +447,16 @@ end
 function Sheet:toString()
    local desc = self.name and self.name or tostring(self);
    return "BDT_GUI.Sheet["..desc..","..tostring(self).."]";
+end
+
+--------------------------------------------------------------------------------
+-- Disattaches this sheet from its parent
+--------------------------------------------------------------------------------
+function Sheet:detach()
+	if self.parent ~= nil then
+		self.parent:removeSheet(self)
+		self.parent = nil;
+	end
 end
 
 --------------------------------------------------------------------------------

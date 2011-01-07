@@ -1,5 +1,5 @@
 -- Convert pixel coordinates into box2d coordinates.
-return function(BDT_Common){
+return function(BDT_Common)
 -- Treats x and y coordinates the same.
 local LinearConverter = {};
 LinearConverter.__index = LinearConverter;
@@ -31,4 +31,4 @@ function BDT_Common.newLinearConverter( _b2MetersInPixel )
 	);
 end;
 
-}
+end

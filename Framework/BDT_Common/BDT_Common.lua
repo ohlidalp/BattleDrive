@@ -87,7 +87,10 @@ function BDT_Common.tableConcat(t, tab, comma, newline)
 		output=output..tab..tostring(key)..comma..tostring(value);
 	end;
 	return output;
-end;
+end
+
+require(BDT_Common_Dir.."/BDT_Common_LinearConverter.lua") (BDT_Common);
+require(BDT_Common_Dir.."/BDT_Common_MapConverter.lua") (BDT_Common);
 
 return BDT_Common;
 

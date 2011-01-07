@@ -12,7 +12,7 @@ function SheetContent:draw()
 
 end
 
-function SheetContent:attachSheet()
+function SheetContent:attachSheet(s)
 
 end
 
@@ -25,7 +25,7 @@ function BDT_GUI.newSheetContent()
 end
 
 function BDT_GUI.isInstanceOfSheetContent(o)
-	return BDT.isTableAndHasFunctions(o,"draw");
+	return BDT.isTableAndHasFunctions(o,"draw","attachSheet");
 end
 
 end -- Enclosing function

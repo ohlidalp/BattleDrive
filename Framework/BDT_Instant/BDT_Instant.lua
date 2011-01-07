@@ -1,44 +1,44 @@
-return function ( BDT )
+return function ( BDT_Instant_Dir )
 
 local Instant = {};
 
 --- Creates a love.physics world of given size + 1 b2Meter wide borders.
--- @param worldW number World width in b2Meters
--- @param worldH number World height in b2Meters
+-- @param x1 number x1 coordinate in b2Meters
+-- @param y1 number y1 coordinate in b2Meters
+-- @param x2 number x2 coordinate in b2Meters
+-- @param y2 number y2 coordinate in b2Meters
+-- @param meter Length of b2Meter in pixels.
 -- @param sleep boolean Flag whether to activate sleeping in the world
 -- @return The physics world
--- @return The ground body
-function Instant.physWorld( worldW, worldH, sleep, borderPolys, gravityX, gravityY )
+-- @return love.physics.Body ground body
+-- @return love.physics.RectangleShape top border
+-- @return love.physics.RectangleShape bottom border
+-- @return love.physics.RectangleShape left border
+-- @return love.physics.RectangleShape right border
+function Instant.createFencedPhysWorld( x1, y1, x2, y2, meter, gravityX, gravityY, sleep )
 	sleep = sleep~=nil and sleep or true;
 	gravityX = gravityX or 0;
 	gravityY = gravityY or 0;
+	local love_physics = love.physics;
+	local love_physics_newRectangleShape = love_physics.newRectangleShape;
+	local width = x2 - x1;
+	local height = y2 - y1;
+	local thickness = 5; -- Width of border polygons (in pixels)
 	-- Physics world
-	local world = love.physics.newWorld(
-			-1, -1, (worldW)+1, (worldH)+1, gravityX, gravityY, sleep );
-	local ground = love.physics.newBody( world, 0, 0, 0 );
-
+	local world = love_physics.newWorld(
+			x1-1, y1-1, x2+1, y2+1, gravityX, gravityY, sleep );
+	world:setMeter(meter);
+	local ground = love_physics.newBody( world, x1, y1, 0 );
+	-- Clockwise order is OK
 	-- Top
-	borderPolys.top = love.physics.newPolygonShape(
-		ground,  0,-1,   worldW+1,-1,   worldW+1,0,   0,0 );
-	-- Bottom
-	borderPolys.bottom = love.physics.newPolygonShape( ground,
-		-1, worldH,
-		worldW,worldH,
-		worldW,worldH+1,
-		-1, worldH+1);
-	-- Left
-	borderPolys.left = love.physics.newPolygonShape( ground,
-		-1,-1,
-		0,-1,
-		0,worldH,
-		-1, worldH );
+	bpTop = love_physics_newRectangleShape(ground, x1-1, y1-1, width + 1, thickness, 0 );--0,0, x2,0, 1,x2, 0,1 );
 	-- Right
-	borderPolys.right = love.physics.newPolygonShape( ground,
-		worldW, 0,
-		worldW+1, 0,
-		worldW+1, worldH+1,
-		worldW, worldH+1 );
-	return world,ground;
+	bpRight = love_physics_newRectangleShape( ground, x2, y1-1, thickness, height + 1, 0 );
+	-- Left
+	bpLeft = love_physics_newRectangleShape( ground, x1-1, y1, thickness, height + 1, 0 );
+	-- Bottom
+	bpBottom = love_physics_newRectangleShape( ground, x2-1, y2, width + 1, thickness, 0);
+	return world, ground, bpTop, bpBottom, bpLeft, bpRight;
 end;
 
 --- This function paints supplied map with checker pattern and 1 tile wide border
@@ -72,9 +72,9 @@ function Instant.checkerMap( map, blackTileIndex, whiteTileIndex, edgeTileIndex 
 		map.tiles[iY][iXMax] = edgeTileIndex;
 	end;
 
-	--[ [
+	--[[
 	-- Debug print
-	print("<Checker map> w:", map.constants.array.w, "h:", map.constants.array.h);
+	print("[Checker map] w:", map.constants.array.w, "h:", map.constants.array.h);
 	for iy, row in ipairs(map.tiles) do
 		rowStr = "";
 		for ix, t in ipairs(row) do

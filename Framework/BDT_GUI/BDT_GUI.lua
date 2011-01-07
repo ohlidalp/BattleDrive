@@ -140,74 +140,17 @@ function BDT_GUI.removeAllSheets(self)
 	end
 end
 
-
-
-
-BDT_GUI.newColor = newColor;
-local fillAlpha = 50;
-local function newColor( r,g,b,a )
-	return {r,g,b,a}
-end
-local colorMousedownOutline = newColor( 50,255,50,255 );
-local colorMousedownFill = newColor(255,255,0,fillAlpha);
-
-BDT_GUI.debugPalette = {
-	page = {
-		shieldedOutline = newColor( 155, 0, 0, 255 ); -- wtf
-		shieldedFill = newColor( 155, 0, 0, fillAlpha );
-		outline = newColor(100,100,100,255);
-		fill = newColor(100,100,100,fillAlpha);
-		inactiveOutline = newColor( 0, 0, 155, 255 );
-		inactiveFill = newColor(0,0,155,fillAlpha);
-		mouseoverFill = newColor(150,150,150,fillAlpha);
-		mouseoverOutline = newColor( 150,150,150,255 );
-		mousedownFill = newColor(155,155,155,fillAlpha);
-		mousedownOutline = colorMousedownOutline;
-	},
-	label = {
-		inactiveOutline = newColor(153,86,57,255);
-		inactiveFill = newColor(153,86,57,fillAlpha);
-		outline = newColor(255,128,64,255);
-		fill = newColor(255,128,64,fillAlpha);
-		mouseoverOutline = newColor(255,255,0,255);
-		mouseoverFill = colorMousedownFill;
-		mousedownOutline = colorMousedownOutline;
-		mousedownFill = colorMousedownFill;
-	}
-};
---------------------------------------------------------------------------------
--- @class table
--- @name BDT_GUI.defaultPalette
--- @description Table which Renderer classes use to query colors; This table defines "Palette" object!
---------------------------------------------------------------------------------
-local defFillAlpha = 255;
-local downTL = {255,255,255,255};
-local downBR = {200,200,255,255};
-local downFill = {150,150,200,defFillAlpha};
-local defPage = {
-		outlineTopLeft = {200,200,200,255};
-		outlineBottomRight = {100,100,100,255};
-		fill = newColor(100,100,100,defFillAlpha);
-		mouseoverFill = newColor(100,100,150,defFillAlpha);
-		mouseoverOutlineTopLeft = newColor( 150,150,200,255 );
-		mouseoverOutlineBottomRight = newColor( 100,100,200,255 );
-		mousedownFill = newColor(155,155,200,defFillAlpha);
-		mousedownOutlineTopLeft = downTL;
-		mousedownOutlineBottomRight = downBR;
-		inactiveOutline = newColor( 0, 0, 155, 255 );
-		inactiveFill = newColor(0,0,155,defFillAlpha);
-};
-BDT_GUI.defaultPalette = {
-	page = defPage;
-	label = defPage;
-};
 BDT_GUI.newCallbackList = require (BDT_GUI_Dir.."/BDT_GUI_CallbackList.lua");
 require (BDT_GUI_Dir.."/BDT_GUI_Arrangement.lua") (BDT_GUI);
 require (BDT_GUI_Dir.."/BDT_GUI_Sheet.lua") (BDT_GUI);
 require (BDT_GUI_Dir.."/BDT_GUI_SheetRenderer.lua") (BDT_GUI);
 require (BDT_GUI_Dir.."/BDT_GUI_SheetContent.lua") (BDT_GUI);
 require (BDT_GUI_Dir.."/BDT_GUI_SheetTextContent.lua") (BDT_GUI);
+require (BDT_GUI_Dir.."/BDT_GUI_SheetTextArea.lua") (BDT_GUI);
+require (BDT_GUI_Dir.."/BDT_GUI_Palette.lua") (BDT_GUI);
 require (BDT_GUI_Dir.."/BDT_GUI_Desk.lua") (BDT_GUI);
+require (BDT_GUI_Dir.."/BDT_GUI_Util.lua") (BDT_GUI);
+require (BDT_GUI_Dir.."/BDT_GUI_Shorthands.lua") (BDT_GUI);
 
 
 

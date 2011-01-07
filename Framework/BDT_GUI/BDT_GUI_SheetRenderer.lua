@@ -6,9 +6,10 @@ return function (BDT_GUI) -- Enclosing function
 -- @name class SheetRenderer
 -- @description Basic sheet renderer.
 -- @field contents table Table of SheetContent objects.
--- @field palette table Table with colors.
+-- @field palette Palette Table with colors.
 -- @field lineColorTL table{r,g,b,a} Outline color for top and left border.
 -- @field lineColorBR table{r,g,b,a} Outline color for bottom and right border.
+-- @field fillColor table{r,g,b,a}
 --------------------------------------------------------------------------------
 local SheetRenderer = {};
 SheetRenderer.__index = SheetRenderer;
@@ -23,13 +24,14 @@ function BDT_GUI.newSheetRenderer(aSheet)
 	end
 	local palette;
 	if aSheet:hasChildren() then
-		palette = BDT_GUI.defaultPalette.page;
+		palette = BDT_GUI.newPalette("page");
 	else
-		palette = BDT_GUI.defaultPalette.label;
+		palette = BDT_GUI.newPalette("label");
 	end
 	local R = setmetatable({
-		fillColor = false;
-		lineColor = false;
+		fillColor = palette.fill;
+		lineColorTL = palette.outlineTopLeft;
+		lineColorBR = palette.outlineBottomRight;
 		palette = palette;
 		sheet = aSheet;
 		contents = {};
@@ -42,13 +44,13 @@ end
 
 --------------------------------------------------------------------------------
 -- Informs the renderer about mouse activity.
--- @param mouseOver boolean Flags if mouse is over the sheet.
+-- @param mouseOver boolean Flags if mouse is over/out-of the sheet.
 -- @param mouseDown boolean Flats if mouse button is pressed above the sheet.
 --------------------------------------------------------------------------------
 function SheetRenderer:mouseEvent(mouseOver, mouseDown)
 	local pal = self.palette;
-	if( mouseOver==true ) then
-		if( mouseDown==true ) then
+	if( mouseOver == true ) then
+		if( mouseDown == true ) then
 			self.fillColor = pal.mousedownFill;
 			self.lineColorTL = pal.mousedownOutlineTopLeft;
 			self.lineColorBR = pal.mousedownOutlineBottomRight;
@@ -70,7 +72,7 @@ end
 --------------------------------------------------------------------------------
 function SheetRenderer:sheetActivationEvent(v)
 	local pal = self.palette;
-	if v==true then
+	if v == true then
 		self.fillColor = pal.fill;
 		self.lineColorTL = pal.outlineTopLeft;
 		self.lineColorBR = pal.outlineBottomRight;
@@ -86,29 +88,28 @@ function SheetRenderer:draw()
 	local love_graphics = love.graphics;
 	local love_graphics_line = love_graphics.line;
 	local love_graphics_setColor = love_graphics.setColor;
+
 	-- Save env.
 	local envR, envG, envB = love_graphics.getColor();
+
 	-- Render the sheet
-	love_graphics.setLineStyle( 'rough' );
-	--local fill = self.fillColor;
-	love_graphics_setColor(self.fillColor)--(fill[1],fill[2],fill[3],fill[4]);
 	local sheet = self.sheet;
-	local tlX,tlY,trX,trY,brX,brY,blX,blY = sheet:getCorners();--(offsetX, offsetY);
-	love_graphics.polygon( 'fill', tlX,tlY,trX,trY,brX,brY,blX,blY);--self.sheet:getCorners(offsetX, offsetY) );
-	--local lineColor = self.lineColor;
-
-	love_graphics_setColor(self.lineColorBR);--(lineColor[1],lineColor[2],lineColor[3],lineColor[4]);
-
-	--love.graphics.polygon( 'line',self.sheet:getCorners(offsetX, offsetY) );
-	love_graphics_line(blX,blY,brX,brY,trX,trY);
+	local tlX,tlY,trX,trY,brX,brY,blX,blY = sheet:getCorners();
+	love_graphics_setColor(self.fillColor);
+	love_graphics.polygon( 'fill', tlX,tlY,trX,trY,brX,brY,blX,blY);
+	love_graphics.setLineStyle( 'rough' );
 	love_graphics_setColor(self.lineColorTL);
 	love_graphics_line(blX,blY,tlX,tlY,trX,trY);
+	love_graphics_setColor(self.lineColorBR);
+	love_graphics_line(blX,blY,brX,brY,trX,trY);
+
 	-- Render contents
 	local i;
 	local contents = self.contents;
 	for i=1,#contents,1 do
 		contents[i]:draw();
 	end
+
 	-- Restore env.
 	love_graphics_setColor(envR, envG, envB);
 end
@@ -116,14 +117,13 @@ end
 function SheetRenderer:attachSheet(s)
 	if BDT_GUI.isInstanceOfSheet(s) then
 		self.sheet=s;
-		local palette = s:hasChildren() and BDT_GUI.defaultPalette.page or BDT_GUI.defaultPalette.label;
-		self.fillColor = palette.fill;
-		self.lineColorTL = palette.outlineTopLeft;
-		self.lineColorBR = palette.outlineBottomRight;
-		self.palette = palette;
 	else
 		print("WARNING: BDT_GUI.SheetRenderer:attachSheet() Supplied object ["..tostring(s).."] is not a Sheet");
 	end
+end
+
+function SheetRenderer:getPalette()
+	return self.palette;
 end
 
 --------------------------------------------------------------------------------

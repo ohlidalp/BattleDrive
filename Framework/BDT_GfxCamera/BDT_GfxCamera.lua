@@ -2,7 +2,7 @@
 Battledale graphical camera
 
 == GfxCamera methods ==
-	
+
 	+ addTowerGrob( newGrob )
 	+ addTowerGrobs( t )
 	+ removeTowerGrob(grob)
@@ -20,29 +20,29 @@ Battledale graphical camera
 	+ getNoVisibleShadowGrobs()
 	+ computeMapPos( screenX, screenY )
 	+ draw()
-	
+
 	- updateTowerGrobLists()
 	- updateShadowGrobLists()
 	- grobIsVisible( grob )
 	- drawOutline()
 	- drawTiles()
 	- drawTableOfGrobs(t)
-	
+
 == Notes ==
 Grob types:
 	"Tower grob" is a grob which has to be z-sorted for correct displaying.
 	"Shadow grob" is a grob which represents a shadow, and thus is drawn before
 		tower grobs and the ordering doesn't matter.
 	Technically, they're the same.
-	
+
 Grob storage:
-	For performance, every GfxCamera object keeps its own lists of grobs 
-	instead of reading a global one. There are two lists (one for 
+	For performance, every GfxCamera object keeps its own lists of grobs
+	instead of reading a global one. There are two lists (one for
 	grobs currently visible and second for other grobs) for every
 	grob type, i.e 2 for tower grobs, 2 for shadow grobs.
 	Thus, to make a grob display in the camera, you need to distribute
 	it using "add*Grob*()" methods.
-	
+
 Viewport:
 	The viewport must be a bdgui.sheet or object of following model:
 	{
@@ -57,9 +57,36 @@ return function ( battledale ) -- Enclosing function
 local GfxCamera = {};
 GfxCamera.__index = GfxCamera;
 
+-- Util
+
+local RunnablesList={};
+RunnablesList.__index = RunnablesList;
+
+local function newRunnablesList()
+	local rl = setmetatable({},RunnablesList);
+	rl.list={};
+	return rl;
+end;
+
+function RunnablesList:add(r)
+	table.insert(self.list,1,r);
+	return self;
+end;
+
+function RunnablesList:remove(r)
+	INTERFACE.table.removeByValue(self.list, r);
+end;
+
+function RunnablesList:run(...)
+	for index, runnable in ipairs(self.list) do
+		runnable:run(...);
+	end;
+end;
+
 ---- Constructor ----
 
-local function newGfxCamera( _map, _mapPosVec, _viewportRect )	
+local function newGfxCamera( _map, _mapPosVec, _viewportRect, zSortFunction )
+	BDT.checkArg("BDT_GfxCamera::newGfxCamera", "zSortFunction", zSortFunction, "function");
 	return setmetatable(
 		{
 			viewport = _viewportRect;
@@ -72,11 +99,8 @@ local function newGfxCamera( _map, _mapPosVec, _viewportRect )
 			shadowGrobsNotVisible = {};
 			emptyTable = {};
 			useCustomRenderers=true;
-			
-			-- FIXME obsolete, use objects (renderers) instead
-			customDrawingFunctions = battledale.newCallbackList(); 
-			
-			customRenderers = battledale.newRunnablesList();
+			customRenderers = newRunnablesList();
+			zSortFunction = zSortFunction;
 		},
 		GfxCamera
 	);
@@ -90,13 +114,13 @@ function GfxCamera:updateTowerGrobLists()
 	for notVisIndex, newGrob in ipairs(self.notVisibleGrobs) do
 		if(self:grobIsVisible(newGrob)) then
 			table.remove( self.notVisibleGrobs, notVisIndex );
-			-- Find the index to insert the new grob	
+			-- Find the index to insert the new grob
 			local frontZ = -1000;
 			local rearZ = 0;
 			for visIndex, visGrob in ipairs(self.visibleGrobs) do
 				rearZ = frontZ;
 				frontZ = visGrob.z;
-				if( newGrob.z>=rearZ and newGrob.z<=frontZ ) then	
+				if( newGrob.z>=rearZ and newGrob.z<=frontZ ) then
 					table.insert( self.visibleGrobs, visIndex, newGrob );
 					newGrob=nil;
 					break;
@@ -108,8 +132,8 @@ function GfxCamera:updateTowerGrobLists()
 			end;
 		end;
 	end;
-	
-	-- Move grobs which are not visible 
+
+	-- Move grobs which are not visible
 	for visIndex, grob in ipairs(self.visibleGrobs) do
 		if( not self:grobIsVisible(grob) ) then
 			table.remove( self.visibleGrobs, visIndex );
@@ -138,10 +162,10 @@ end;
 
 function GfxCamera:grobIsVisible( grob )
 	local x1,y1,x2,y2 = grob:getImageArea();
-	local bx1,by1,bx2,by2 = 
+	local bx1,by1,bx2,by2 =
 		self.mapPos.x, self.mapPos.y,
 		self.mapPos.x+self.viewport.w, self.mapPos.y+self.viewport.h;
-	local overlap = battledale.aabbsOverlap(x1,y1,x2,y2,bx1,by1,bx2,by2);
+	local overlap = BDT_Common.aabbsOverlap(x1,y1,x2,y2,bx1,by1,bx2,by2);
 	--[[
 	console:printLn("<grobIsVisible>");
 	console:printLn("    grob [x1]"
@@ -162,15 +186,15 @@ function GfxCamera:addTowerGrob( newGrob )
 		--print("GfxCamera:addTowerGrob() visible");
 		-- If there are grobs already, insert it into the right place
 		if #self.visibleGrobs>0 then
-			-- Find the index to insert the new grob	
+			-- Find the index to insert the new grob
 			local frontZ = -1000;
 			local rearZ = 0;
 			for visIndex, visGrob in ipairs(self.visibleGrobs) do
 				rearZ = frontZ;
-				
+
 				frontZ = visGrob.z;
-				if( newGrob.z>=rearZ and newGrob.z<=frontZ ) then	
-					
+				if( newGrob.z>=rearZ and newGrob.z<=frontZ ) then
+
 					table.insert( self.visibleGrobs, visIndex, newGrob );
 					newGrob=nil;
 					break;
@@ -224,7 +248,7 @@ end;
 GfxCamera.addGrobs = GfxCamera.addTowerGrobs; -- FIXME deprecated name
 
 function GfxCamera:drawOutline()
-	love.graphics.rectangle( love.draw_line, self.viewport.absolutePos.x, self.viewport.absolutePos.y,
+	love.graphics.rectangle( "line", self.viewport.absolutePos.x, self.viewport.absolutePos.y,
 		self.viewport.w, self.viewport.h );
 end;
 
@@ -239,41 +263,41 @@ function GfxCamera:moveOnMap( moveX, moveY )
 end;
 
 function GfxCamera:drawTiles()
-	
+
 	-- get viewport's top left corner map position
 	local tlCornerMapX = self.mapPos.x;
 	local tlCornerMapY = self.mapPos.y;
-	
+
 	-- get corner tiles array coordinates (remember lua indices start with 1)
 	-- top left tile
 	local tlTileX, tlVpOffsetX = math.modf( tlCornerMapX/self.map.constants.tile.w );
 	local tlTileY, tlVpOffsetY = math.modf( tlCornerMapY/self.map.constants.tile.h );
-	if tlVpOffsetX ~= 0 then 
+	if tlVpOffsetX ~= 0 then
 		tlTileX = tlTileX+1;
 		tlVpOffsetX = tlVpOffsetX*self.map.constants.tile.w ;
 	end;
-	if tlVpOffsetY ~= 0 then 
+	if tlVpOffsetY ~= 0 then
 		tlTileY = tlTileY+1;
 		tlVpOffsetY = tlVpOffsetY*self.map.constants.tile.h;
 	end;
-	
+
 	-- bottom right tile
 	local brTileX, brRemX = math.modf( (tlCornerMapX+self.viewport.w)/self.map.constants.tile.w );
 	local brTileY, brRemY = math.modf( (tlCornerMapY+self.viewport.h)/self.map.constants.tile.h );
 	if brRemX ~= 0 then brTileX = brTileX+1 end;
 	if brRemY ~= 0 then brTileY = brTileY+1 end;
-	
+
 	-- get screen position of top left tile
 	local tileScrOffsetX = self.viewport.absolutePos.x-tlVpOffsetX;
 	local tileScrOffsetY = self.viewport.absolutePos.y-tlVpOffsetY;
-		
+
 	local tileY, tileX;
 	for tileY = tlTileY, brTileY, 1 do
 		for tileX = tlTileX, brTileX, 1 do
 			local tileGraphic = self.map:getTile( tileX, tileY );
 			if(tileGraphic ~= nil) then
 				--[[
-				console:printLn("tile <"..tostring(self.map:getTileIndex(tileX,tileY)) 
+				console:printLn("tile <"..tostring(self.map:getTileIndex(tileX,tileY))
 					.."> y:",tileY,"x:",tileX);
 				--]]
 				--print("<gfxCamera:draw>tileGraphic, tileScrOffsetX, tileScrOffsetY:",tileGraphic, tileScrOffsetX, tileScrOffsetY);
@@ -296,41 +320,40 @@ function GfxCamera:drawTableOfGrobs(t)
 		--]]
 		grob:draw(
 			(grob.pos.x-self.mapPos.x)+self.viewport.absolutePos.x,
-			(grob.pos.y-self.mapPos.y)+self.viewport.absolutePos.y );	
+			(grob.pos.y-self.mapPos.y)+self.viewport.absolutePos.y );
 	end;
 end;
 
 function GfxCamera:draw()
-	local origColor = love.graphics.getColor();
+	local love_graphics = love.graphics;
+	local love_graphics_setScissor = love_graphics.setScissor;
+	local origColorR, origColorG, origColorB = love_graphics.getColor();
 	--[[
 	print("gfxCam:draw() self.viewport.absolutePos:"..tostring(self.viewport.absolutePos)..
 		" x:"..tostring(self.viewport.absolutePos.x));
 	--]]
-	love.graphics.setScissor(
-			self.viewport.absolutePos.x, self.viewport.absolutePos.y, 
+	love_graphics_setScissor(
+			self.viewport.absolutePos.x, self.viewport.absolutePos.y,
 			self.viewport.w, self.viewport.h );
-			
+
 	self:updateTowerGrobLists();
 	self:updateShadowGrobLists();
 	self:drawTiles();
-	battledale.grob.zInsertSort(self.visibleGrobs);
+	self.zSortFunction(self.visibleGrobs);--OLD BDT_GROB.zInsertSort(self.visibleGrobs);
 	self:drawTableOfGrobs(self.shadowGrobsVisible);
 	self:drawTableOfGrobs(self.visibleGrobs);
 	self:drawOutline();
-	
-	-- Run custom drawing functions
-	self.customDrawingFunctions:call(self);
-	
+
 	-- Run custom renderer objects
 	self.customRenderers:run(self);
-		
-	love.graphics.setScissor();
-	love.graphics.setColor(origColor);
+
+	love_graphics_setScissor();
+	love_graphics.setColor(origColorR, origColorG, origColorB);
 end;
 
 -- Computes map coordinates (in pixels) from a screen point
 function GfxCamera:computeMapPos( screenX, screenY )
-	return 
+	return
 		(screenX-self.viewport.absolutePos.x)+self.mapPos.x,
 		(screenY-self.viewport.absolutePos.y)+self.mapPos.y;
 end;
@@ -367,6 +390,8 @@ function GfxCamera:getUseCustomRenderers()
 	return self.useCustomRenderers;
 end;
 
-return newGfxCamera;
+return {
+	newGfxCamera = newGfxCamera
+};
 
 end; -- End of enclosing function
