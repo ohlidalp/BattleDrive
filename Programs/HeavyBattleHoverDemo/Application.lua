@@ -1,9 +1,9 @@
 --[[
 ________________________________________________________________________________
 
-                                                       Heavy Battle Hover Demo
-                                                                   Version 1.1
-                       Copyright (C) 2009-2010 Petr Ohlidal <An00biS@email.cz>
+ Heavy Battle Hover Demo
+ Version 1.2
+ Copyright (C) 2009-2010 Petr Ohlidal <An00biS@An00biS.cz>
 
 _________________________________ License ______________________________________
 
@@ -26,6 +26,7 @@ freely, subject to the following restrictions:
 ________________________________________________________________________________
 
 --]]
+
 local love = love;
 local math = math;
 local HBHD_Config = {
@@ -60,12 +61,12 @@ local HBHD_Config = {
 	blasterB_directControlKey    = "o";
 
 	resetGunsKey                 = "r";
-	bgColor                      = {50,150,80,255};--love.graphics.newColor(50,150, 80);
+	bgColor                      = {50,150,80,255};
 	enableBlasters               = true;
-	helpColor                    = {0,255,255,255};--love.graphics.newColor(0,255,255);
-	helpBgColor                  = {100,100,100,150};--love.graphics.newColor(100,100,100, 150);
+	helpColor                    = {0,255,255,255}; -- Also debug console.
+	helpBgColor                  = {0,0,0,150};
 	helpW                        = 400;
-	helpH                        = 350;
+	helpH                        = 300;
 };
 HBHD_Config.vehicleSpec = {
 	---- Vehicle properties ----
@@ -82,23 +83,6 @@ HBHD_Config.vehicleSpec = {
 	reverseSlowdown = 50,
 	forwardBrake = 133,
 }
---[[OBSOLETE
-HBHD_Config.video1024 = {
-	w = 1024,
-	h=768,
-	fsaa=0,
-	vsync=false,
-	fulscreen=true
-}
-HBHD_Config.video800={
-	w=800,
-	h=600,
-	fsaa=0,
-	vsync=false,
-	fulscreen=false
-}
-HBHD_Config.video = HBHD_Config.video800;
---]]
 
 local HBHD_App = {false,false,false,false,false};
 HBHD_App.__index = HBHD_App;
@@ -107,17 +91,33 @@ HBHD_App.__index = HBHD_App;
 -- KeyPressed LOVE callback
 --------------------------------------------------------------------------------
 function HBHD_App:keyPressed(key,unicode)
-	--print("DBG HBHD_App.KeyPressed(): key:"..tostring(key));
+	-- Aliases
 	local l = love;
 	local config = HBHD_Config;
 	local bools = self.bools;
+	local turretTurntable = self.turretTurntable;
+	local blasterRightTurntable = self.blasterRightTurntable;
+	local blasterLeftTurntable = self.blasterLeftTurntable;
+	local blasterRearTurntable = self.blasterRearTurntable;
+
 	-- toggling
-	if     key == config.toggleGrassKey then
+	if key == config.toggleGrassKey then
 		bools.drawGrass = not bools.drawGrass;
 	elseif key == config.showHelpKey then
 		bools.showHelp = not bools.showHelp;
+		if bools.showHelp then
+			self.desk:attachSheet(self.helpSheet);
+		else
+			self.desk:removeSheet(self.helpSheet);
+		end
 	elseif key == config.showDebugConsoleKey then
 		bools.showDebugConsole = not bools.showDebugConsole;
+		if bools.showDebugConsole then
+			self.desk:attachSheet(self.dbgConsoleSheet);
+		else
+			self.desk:removeSheet(self.dbgConsoleSheet);
+		end
+
 	elseif key == config.allGunsToggleSyncRotationKey then
 		turretGrob:setSynchronizeVisualAngle( not turretGrob:getSynchronizeVisualAngle() );
 		leftBlasterGrob:setSynchronizeVisualAngle( not leftBlasterGrob:getSynchronizeVisualAngle() );
@@ -128,7 +128,6 @@ function HBHD_App:keyPressed(key,unicode)
 		blasterRightTurntable:setRespectHeight( not blasterRightTurntable:getRespectHeight() );
 		blasterLeftTurntable:setRespectHeight( not blasterLeftTurntable:getRespectHeight() );
 		blasterRearTurntable:setRespectHeight( not blasterRearTurntable:getRespectHeight() );
-
 
 	-- Turrets control toggles
 	elseif(key==config.turretToggleDirectControlKey)then
@@ -142,10 +141,10 @@ function HBHD_App:keyPressed(key,unicode)
 
 
 	elseif key == "escape" then
-		print("== Heavy Battle Hover Demo: Exit ==");
+		print(" ==== Heavy Battle Hover Demo: Exit ==");
 		self:exit();
 	end;
-	hoverUndercart:keyPressed(key);
+	self.hoverUndercart:keyPressed(key);
 	--print("<main.keypressed> key:"..tostring(key));
 	turretTurntable:keyPressed(key);
 
@@ -157,11 +156,11 @@ end;
 
 function HBHD_App:keyReleased(key)
 	-- turret controls
-	hoverUndercart:keyReleased(key);
-	turretTurntable:keyReleased(key);
-	blasterRightTurntable:keyReleased(key);
-	blasterLeftTurntable:keyReleased(key);
-	blasterRearTurntable:keyReleased(key);
+	self.hoverUndercart:keyReleased(key);
+	self.turretTurntable:keyReleased(key);
+	self.blasterRightTurntable:keyReleased(key);
+	self.blasterLeftTurntable:keyReleased(key);
+	self.blasterRearTurntable:keyReleased(key);
 end;
 
 function HBHD_App:draw()
@@ -172,6 +171,7 @@ function HBHD_App:draw()
 	local config = HBHD_Config;
 	local love_graphics_print = love_graphics.print;
 	local love_graphics_setColor = love_graphics.setColor;
+	local bodyGrob = self.hoverBodyGrob;
 
 	-- Get info
 	local screenW,screenH = love_graphics.getWidth(), love_graphics.getHeight();--OLD config.video.w, config.video.h;
@@ -188,98 +188,64 @@ function HBHD_App:draw()
 	end
 
 	-- Debug console
-	console:printLn("Rotation sync:"..(turretGrob:getSynchronizeVisualAngle() and "Enabled" or "Disabled"));
-	console:printLn("Turret control:"..(turretTurntable:getDirectControl() and "Keyboard" or "Mouse"));
-	console:printLn("Right blaster control:"..(blasterRightTurntable:getDirectControl() and "Keyboard" or "Mouse"));
-	console:printLn("Left blaster control:"..(blasterLeftTurntable:getDirectControl() and "Keyboard" or "Mouse"));
-	console:printLn("Rear blaster control:"..(blasterRearTurntable:getDirectControl() and "Keyboard" or "Mouse"));
-
-	--[[
-	console:printLn(
-
-		"Speed: "..tankVehicle:getSpeed()
-		.."\nVisual angle deg: "..hoverGrob:getVisualAngleDegrees()
-		--..'\nVisual angle rad: '..tankGrob:getVisualAngleRadians()
-		.."\nSteering: "..(tankVehicle:getSmoothSteering() and "Smooth" or "In steps")
-		.."\nRotation of turret: "..(gunGrob:getSynchronizeVisualAngle()
-			and "Synchronized" or "Not synchronized"));
-	console:printLn( "Turret control: "..(gunTurntable:getDirectControl() and "Keyboard" or "Mouse") );
-	--]]
 	if bools.showDebugConsole then
-		console:draw();
-	end
-	console:ff();
-
-	--- Displaying help
-	if bools.showHelp then
-		local helpBgColor = config.helpBgColor
-		love_graphics_setColor(helpBgColor); --OLD (helpBgColor[1],helpBgColor[2],helpBgColor[3],helpBgColor[4]);
-		love_graphics.rectangle( "fill", screenW-config.helpW, 0,
-			config.helpW, config.helpH);
-		local helpColor = config.helpColor;
-		love_graphics_setColor(helpColor[1],helpColor[2],helpColor[3],helpColor[4]);
-		love_graphics_print(
-			"W,S : Accelerate/brake\n"..
-			"A,D : Turn left/turn right\n"..
-			"Q,E : Rotate cannon left/right (if mouse aiming inactive)\n"..
-			"L,K : Rotate right blaster\n"..
-			"J,H : Rotate left blaster\n"..
-			"M,N : Rotate rear blaster\n"..
-			--"I : Toggle smooth steering/fixed step steering\n"..
-			"G : Toggle grass display\n"..
-			"F2 : Display info console\n"..
-			"U : Toggle turret keyboard/mouse aiming\n"..
-			"P : Toggle right blaster keyboard/mouse aiming\n"..
-			"I : Toggle left blaster keyboard/mouse aiming\n"..
-			"O : Toggle rear blaster keyboard/mouse aiming\n"..
-			"Y : Toggle rotation sync between grobs.\n"..
-			"ESC: Exit", (screenW-config.helpW)+10,15);
-	else
-		love_graphics_print("F1 = Help", 710,15);
+		local console = self.dbgConsoleText;
+		console:ff();
+		local ucart = self.hoverUndercart;
+		local body = bodyGrob;
+		local bodyX, bodyY, bodyZ = body:getPosition();
+		console:printLn(
+			"Body pos \n\tX:"..bodyX.."\n\tY:"..bodyY.."\n\tZ:"..bodyZ
+			.."\nSpeed: "..ucart:getSpeed()
+			.."\nBodyVisAngleDeg: "..body:getVisualAngleDegrees()
+			..'\nBodyVisAngleRad: '..body:getVisualAngleRadians()
+			.."\nSteering: "..(ucart:getSmoothSteering() and "Smooth" or "In steps")
+			.."\nRotation of turret: "..(self.turretGrob:getSynchronizeVisualAngle()
+			and "Synchronized" or "Not synchronized"));
+		console:printLn( "Turret control: "..(self.turretTurntable:getDirectControl() and "Keyboard" or "Mouse") );
+		console:printLn("Rotation sync:"..(self.turretGrob:getSynchronizeVisualAngle() and "Enabled" or "Disabled"));
+		console:printLn("Turret control:"..(self.turretTurntable:getDirectControl() and "Keyboard" or "Mouse"));
+		console:printLn("Right blaster control:"..(self.blasterRightTurntable:getDirectControl() and "Keyboard" or "Mouse"));
+		console:printLn("Left blaster control:"..(self.blasterLeftTurntable:getDirectControl() and "Keyboard" or "Mouse"));
+		console:printLn("Rear blaster control:"..(self.blasterRearTurntable:getDirectControl() and "Keyboard" or "Mouse"));
 	end
 
 	-- Display fps
 	love_graphics_print("FPS: "..love.timer.getFPS(), screenW-100, screenH-20 );
+
 	-- Show shadows
-	--[[ == Debug ==
-		print("<DBG Drawing shadows> #"..#shadows);--]]
+	local shadows = self.shadows;
 	for i, grob in pairs(shadows) do
-		--print("\t DBG drawing ["..tostring(i).."] "..grob.name);
 		grob:draw(grob:getPosition());
 	end
 
 	-- Show the hover
-	hoverGrob:draw(hoverGrob:getPosition());
-	--hoverGrob:drawPoints();
+	bodyGrob:draw(bodyGrob:getPosition());
 
-
+	-- Render GUI
+	self.desk:draw();
 end;
 
 function HBHD_App:update(elapsed)
 	--print("<HBHD_App.update>");
-	hoverUndercart:update(elapsed);
+	self.hoverUndercart:update(elapsed);
 	-- Update the turret
 	local mouseX, mouseY = love.mouse.getPosition();
+	local turretTurntable = self.turretTurntable;
 	turretTurntable:aimAt(mouseX, mouseY);
 	turretTurntable:update(elapsed);
 
-	blasterLeftTurntable:aimAt(mouseX, mouseY);
-	blasterRightTurntable:aimAt(mouseX, mouseY);
-	blasterRearTurntable:aimAt(mouseX, mouseY);
+	local blet = self.blasterLeftTurntable;
+	local brit = self.blasterRightTurntable;
+	local bret = self.blasterRearTurntable;
+	blet:aimAt(mouseX, mouseY);
+	brit:aimAt(mouseX, mouseY);
+	bret:aimAt(mouseX, mouseY);
 
-	blasterLeftTurntable:update(elapsed);
-	blasterRightTurntable:update(elapsed);
-	blasterRearTurntable:update(elapsed);
-
+	blet:update(elapsed);
+	brit:update(elapsed);
+	bret:update(elapsed);
 end;
---[[
-function DBG_printMembers(g, msg)
-	print("<DBG DRAWINGORDER "..g.name.." ["..#g.drawingOrder.."]> "..(msg or ""));
-	for i, grob in ipairs(g.drawingOrder) do
-		print("\t"..i..": "..grob.name);
-	end
-end
---]]
 
 --------------------------------------------------------------------------------
 -- Handle a LOVE event
@@ -329,7 +295,7 @@ end
 --------------------------------------------------------------------------------
 local function newHBHDApp(menuApp,gameDir)
 
-	print("\n===== HeavyBattleHoverDemo Loading =====");
+
 	-- Load libs
 	if not BDT_Grob then
 		BDT_Grob = BDT:loadLibrary("Grob");
@@ -340,26 +306,23 @@ local function newHBHDApp(menuApp,gameDir)
 	if not BDT_Undercart then
 		BDT_Undercart = BDT:loadLibrary("Undercart");
 	end
-	if not BDT_DebugConsole then
-		BDT_DebugConsole = BDT:loadLibrary("DebugConsole");
-	end
+	BDT_GUI = BDT:loadLibrary("GUI");
 	BDT_Common = BDT:loadLibrary("Common");
 
 	-- Optimization
 	local love = love;
 	local love_graphics = love.graphics;
-	local config = config;
 	local love_graphics_print = love_graphics.print;
 	local love_graphics_setColor = love_graphics.setColor;
 	local love_graphics_present = love_graphics.present;
 	local love_timer_getTime = love.timer.getTime;
 	local config = menuApp:getConfig();
+	local gameConfig = HBHD_Config;
 	local bdGraphicsDir = config.graphicsDir;
 
 	-- Video vars
 	local screenW = love_graphics.getWidth();--OLD config.video.w;
 	local screenH = love_graphics.getHeight();--OLD config.video.h;
-
 
 	-- Loading status display data.
 	local doneColor = {20,200,20,255}
@@ -409,17 +372,17 @@ local function newHBHDApp(menuApp,gameDir)
 	local bodyGrob = hoverBodyWorkshop:buildRoot(screenW/2, screenH/2, 0);
 	local bodyShadowGrob = hoverBodyShadowWorkshop:buildSub();
 	bodyGrob:attachChild(bodyShadowGrob, 0, -1);
-	turretGrob = turretWorkshop:buildSub();
+	local turretGrob = turretWorkshop:buildSub();
 	bodyGrob:attachChild(turretGrob, 1);
 	local turretShadowGrob = turretShadowWorkshop:buildSub();
 	turretGrob:attachChild(turretShadowGrob, 0, -1);
 	local x,y,h = turretGrob:getMountedPegPosition();
 
-	rightBlasterGrob = blasterWorkshop:buildSub();
+	local rightBlasterGrob = blasterWorkshop:buildSub();
 	turretGrob:attachChild(rightBlasterGrob, "Peg_BlasterRight");
-	leftBlasterGrob = blasterWorkshop:buildSub();
+	local leftBlasterGrob = blasterWorkshop:buildSub();
 	turretGrob:attachChild(leftBlasterGrob, "Peg_BlasterLeft");
-	rearBlasterGrob = blasterWorkshop:buildSub();
+	local rearBlasterGrob = blasterWorkshop:buildSub();
 	turretGrob:attachChild(rearBlasterGrob, "Peg_BlasterRear");
 	local rightBlasterShadowGrob = blasterShadowWorkshop:buildSub();
 	rightBlasterGrob:attachChild(rightBlasterShadowGrob, 0, -1);
@@ -429,18 +392,18 @@ local function newHBHDApp(menuApp,gameDir)
 	rearBlasterGrob:attachChild(rearBlasterShadowGrob, 0, -1);
 
 	-- Turntables
-	turretTurntable = BDT_Turntable.newTurntable(
+	local turretTurntable = BDT_Turntable.newTurntable(
 		turretGrob, HBHD_Config.turretTurnSpeedRadians,
 		HBHD_Config.turretTurnLeftKey, HBHD_Config.turretTurnRightKey );
 	turretTurntable:setDirectControl(true);
 
-	blasterRightTurntable = BDT_Turntable.newTurntable(
+	local blasterRightTurntable = BDT_Turntable.newTurntable(
 		rightBlasterGrob, HBHD_Config.blasterTurnSpeedRadians,
 		HBHD_Config.blasterR_goLeftKey, HBHD_Config.blasterR_goRightKey);
-	blasterLeftTurntable = BDT_Turntable.newTurntable(
+	local blasterLeftTurntable = BDT_Turntable.newTurntable(
 		leftBlasterGrob, HBHD_Config.blasterTurnSpeedRadians,
 		HBHD_Config.blasterL_goLeftKey, HBHD_Config.blasterL_goRightKey);
-	blasterRearTurntable = BDT_Turntable.newTurntable(
+	local blasterRearTurntable = BDT_Turntable.newTurntable(
 		rearBlasterGrob, HBHD_Config.blasterTurnSpeedRadians,
 		HBHD_Config.blasterB_goLeftKey, HBHD_Config.blasterB_goRightKey);
 
@@ -448,11 +411,10 @@ local function newHBHDApp(menuApp,gameDir)
 	blasterLeftTurntable:setDirectControl(true);
 	blasterRearTurntable:setDirectControl(true);
 
-
 	-- Hover Undercart
 	local spec = HBHD_Config.vehicleSpec;
 	local keys = HBHD_Config;
-	hoverUndercart = BDT_Undercart.newTrackedUndercart(
+	local hoverUndercart = BDT_Undercart.newTrackedUndercart(
 		bodyGrob,
 		spec.maxForwardSpeed, spec.maxReverseSpeed,
 		spec.forwardAcceleration, spec.reverseAcceleration,
@@ -463,14 +425,9 @@ local function newHBHDApp(menuApp,gameDir)
 	printOk();
 
 	-- Fonts
-	--printLabel("Loading fonts...")
 	local menuFonts = menuApp:getFonts();
 	local font = menuFonts.default12 or love_graphics.newFont(12);
 	love_graphics.setFont(font);
-	font12 = font;
-	--local f30 = defFont30 or love_graphics.newFont(30);
-	font45 = font--f30;
-	--printOk();
 
 	-- Other graphics --
 	printLabel("Loading grass...");
@@ -478,28 +435,72 @@ local function newHBHDApp(menuApp,gameDir)
 	grass = love_graphics.newImage(grassPath, love.image_pad_and_optimize);
 	printOk();
 
-	shadows = {blasterRearShadowGrob, blasterRightShadowGrob, blasterLeftShadowGrob,
-		bodyShadowGrob, turretShadowGrob};
-
-
-
-	-- -- Constants ----
-	DEGREES_IN_RADIAN = (180/math.pi);
-
-	-- -- Global console
-
-	console = BDT_DebugConsole.newDebugConsole();
-
-
-
-	hoverGrob = bodyGrob;
 	local bgColor = HBHD_Config.bgColor;
 	love_graphics.setBackgroundColor(bgColor[1],bgColor[2],bgColor[3],bgColor[4]);
 
-	print("===== HeavyBattleHoverDemo Ready =====");
+	-- GUI
+	local desk = BDT_GUI.newDesk();
+	-- Debug console
+	local sheet = desk:newSheet(0,0,400,300);
+	desk:removeSheet(sheet);
+	local rend = BDT_GUI.newSheetRenderer(sheet);
+	rend:getPalette():setColor("inactiveFill",gameConfig.helpBgColor);
+	sheet:setActive(false); -- Also updates colors.
+	local textArea = BDT_GUI.newSheetTextArea("Hello debug console!");
+	rend:addContent(textArea);
+	textArea:setColor(gameConfig.helpColor);
+	-- Help
+	local helpSheet = desk:newSheet(screenW - gameConfig.helpW, 0, gameConfig.helpW, gameConfig.helpH);
+	desk:removeSheet(helpSheet);
+	local helpRen = BDT_GUI.newSheetRenderer(helpSheet);
+	helpRen:getPalette():setColor("inactiveFill",gameConfig.helpBgColor);
+	local helpText = BDT_GUI.newSheetTextArea(
+		"W,S : Accelerate/brake\n"..
+		"A,D : Turn left/turn right\n"..
+		"Q,E : Rotate cannon left/right (if mouse aiming inactive)\n"..
+		"L,K : Rotate right blaster\n"..
+		"J,H : Rotate left blaster\n"..
+		"M,N : Rotate rear blaster\n"..
+		--"I : Toggle smooth steering/fixed step steering\n"..
+		"G : Toggle grass display\n"..
+		"F2 : Display info console\n"..
+		"U : Toggle turret keyboard/mouse aiming\n"..
+		"P : Toggle right blaster keyboard/mouse aiming\n"..
+		"I : Toggle left blaster keyboard/mouse aiming\n"..
+		"O : Toggle rear blaster keyboard/mouse aiming\n"..
+		"Y : Toggle rotation sync between grobs.\n"..
+		"ESC: Exit");
+	helpRen:addContent(helpText);
+	helpSheet:setActive(false); -- Updates colors
+	helpText:setColor(gameConfig.helpColor);
+
 	return setmetatable({
 		menuApp = menuApp;
-		-- -- Booleans and toggle keys ----
+		-- Gui
+		desk = desk;
+		dbgConsoleSheet = sheet;
+		dbgConsoleText = textArea;
+		helpSheet = helpSheet;
+
+		rightBlasterGrob = rightBlasterGrob;
+		leftBlasterGrob = leftBlasterGrob;
+		rearBlasterGrob = rearBlasterGrob;
+		turretTurntable = turretTurntable;
+		blasterRightTurntable = blasterRightTurntable;
+		blasterLeftTurntable = blasterLeftTurntable;
+		blasterRearTurntable = blasterRearTurntable;
+		hoverUndercart = hoverUndercart;
+		hoverBodyGrob = bodyGrob;
+		turretGrob = turretGrob;
+		-- Shadow grobs
+		shadows = {
+			blasterRearShadowGrob,
+			blasterRightShadowGrob,
+			blasterLeftShadowGrob,
+			bodyShadowGrob,
+			turretShadowGrob
+		};
+		-- Booleans and toggle keys
 		bools = {
 			drawGrass = false;
 			showHelp = false;
@@ -509,4 +510,3 @@ local function newHBHDApp(menuApp,gameDir)
 end;
 
 return newHBHDApp;
-

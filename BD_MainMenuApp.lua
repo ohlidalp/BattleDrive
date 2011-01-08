@@ -73,22 +73,35 @@ MainMenuApp.__tostring = function()
 	return "BD_MainMenuApp"
 end
 
-local newGameSheetMouseDownHandler = require("MainMenu/GameSheetMouseDownHandler.lua");
---local newSelectGameBtnMousedownHandler = require("MainMenu/SelectGameBtnMousedownHandler.lua");
+local GameSheetMouseDownHandler = {};
+GameSheetMouseDownHandler.__index = GameSheetMouseDownHandler;
+
+local function newGameSheetMouseDownHandler(app,gameInfo)
+	if type(app)~="table" then
+	   error("ERROR: newGameSheetMouseDownHandler: invalid arg 'app', expected table,got ["..tostring(app).."]")
+	end
+	if type(gameInfo)~="table" then
+	   error("ERROR: newGameSheetMouseDownHandler: invalid arg 'gameInfo', expected table,got ["..tostring(gameInfo).."]")
+	end
+   return setmetatable({
+		app=app,
+		gameInfo=gameInfo,
+		},GameSheetMouseDownHandler);
+end
+
+function GameSheetMouseDownHandler:run(sheet,x,y,button)
+	self.app:selectGame(self.gameInfo);
+end
 
 --------------------------------------------------------------------------------
 -- Enumerates available BD games; Checks required attributes.
 --------------------------------------------------------------------------------
 function MainMenuApp:enumerateGames()
-	--[ [--#DBG#
-		print("Looking for games...");
-	--]]--#/DBG#
+	print("Looking for games...");
 	local gameInfoFiles = love.filesystem.enumerate(self.config.gamesDir);
 	local gameInfos = {};
 	for index,infoFile in ipairs(gameInfoFiles) do
 		infoFile = self.config.gamesDir..'/'..infoFile;
-		--[[
-			print("File:"..infoFile.." isFile:"..tostring(love.filesystem.isFile(infoFile)).." ext:"..string.sub(infoFile,string.len(infoFile)-2)) --]]
 		if love.filesystem.isFile(infoFile) and
 				string.sub(infoFile,string.len(infoFile)-2)=="lua" then
 			local g = require (infoFile);
@@ -102,8 +115,7 @@ function MainMenuApp:enumerateGames()
 				and BDT_checkField(g,"loaderScriptName","string",errMsg)
 			then
 				table.insert(gameInfos, g);
-				--[ [--#DBG#
-					print("\tFound game: "..g.name); --]]
+				print("\tFound game: "..g.name);
 			end
 		end
 	end
@@ -137,15 +149,12 @@ function MainMenuApp:updateUIGamesList()
 	local itemHeight = self.config.gamesListItemHeight;
 	local itemWidth = self.config.selectGameScreen_RightCollumnWidth;
 	local gameIndex = 0;
-	--[[--#DBG#
-		print("IN MainMenuApp:updateUIGamesList() #self.gameInfos:"..#self.gameInfos);
-	--]]--#/DBG#
 
 	for i,gameInfo in ipairs(self.gameInfos) do
-		local itemY = (i*itemHeight-itemHeight)+1;
+		local itemY = i * (itemHeight + 1) - itemHeight;
 		local gameSheet = gameListSheet:newSheet(0,itemY,itemWidth,itemHeight);
 		local sheetRend = BDT_GUI.newSheetRenderer(gameSheet);
-		local sheetText = BDT_GUI.newSheetTextContent(gameInfo.name,5,5,self.fonts.kimberley12,itemWidth);
+		local sheetText = BDT_GUI.newSheetTextContent(gameInfo.name,5,5,self.fonts.default12,itemWidth);
 		sheetText:setAlign("left");
 		sheetRend:addContent(sheetText);
 		gameSheet:addEventHandler(BDT_GUI.events.MOUSEDOWN,
@@ -155,44 +164,24 @@ function MainMenuApp:updateUIGamesList()
 	self:selectGame(self.gameInfos[1]);
 end
 
+--------------------------------------------------------------------------------
+-- Setup the menu app.
+--------------------------------------------------------------------------------
 function MainMenuApp:initialize()
-	--[[--#DBG#
-		DBG_markMenuTime("initialize() started");
-	--]]--#/DBG#
+	-- Aliases
+	local love_graphics = love.graphics;
+	local love_graphics_newFont = love_graphics.newFont;
 	-- Load fonts
-	--local kim12 = love.graphics.newFont("Graphics/Fonts/Kimberley/kimberley.ttf", 12);
-	--[[--#DBG#
-		DBG_markMenuTime("Font kim12 loaded");
-	--]]--#/DBG#
 	local fonts = self.fonts;
-	local love_graphics_newFont = love.graphics.newFont;
-	local love_timer_getTime = love.timer.getTime;
-	start = love_timer_getTime();
 	fonts.default12 = love_graphics_newFont(12);
-	stepOne = love_timer_getTime();
-	--fonts.default24 = love_graphics_newFont(24);
-	stepTwo = love_timer_getTime();
-	--fonts.default48 = love_graphics_newFont(48);
-	stop = love_timer_getTime();
-	--[[--#DBG#
-		print("Loading default font times: size12: "..stepOne-start
-			..", size24: "..stepTwo-stepOne..", size48:"..stop-stepTwo);
-	--]]--#/DBG#
-	-- HACK
-	fonts.kimberley12=fonts.default12;
-	fonts.kimberley24=fonts.default12;
-	fonts.kimberley48=fonts.default12;
-	--love.graphics.setFont(kim12);
-	--self.fonts.kimberley12=kim12;
-	--self.fonts.kimberley24 = love.graphics.newFont("Graphics/Fonts/Kimberley/kimberley.ttf", 24);
-	-- #DBG# [[
-
-
+	local kimPath = "Graphics/Fonts/Kimberley/kimberley.ttf";
+	fonts.kimberley12 = love_graphics_newFont(kimPath, 12);
+	fonts.kimberley24 = love_graphics_newFont(kimPath, 24);
+	fonts.kimberley48 = love_graphics_newFont(kimPath, 48);
+	love_graphics.setFont(fonts.default12);
+	-- Create interface
 	local screenWidth = love.graphics.getWidth();
 	local screenHeight = love.graphics.getHeight();
-	--[[if screenWidth<1024 or screenHeight<768 then
-		error("FATAL: Main menu needs at least 1024x768 display mode.");
-	end --]]
 	if screenWidth>1024 then
 		self.uiOriginX = math.floor((screenWidth-1024)/2)
 	else
@@ -204,15 +193,7 @@ function MainMenuApp:initialize()
 		self.uiOriginY=0;
 	end
 	self.desk = BDT_GUI.newDesk();
-	--[[--#/DBG#
-		DBG_markMenuTime("BDT_GUI.Desk created");
-	-- #/DBG# ]]
 	self:enumerateGames();
-	--[[--#/DBG#
-		DBG_markMenuTime("games enumerated");
-	-- #/DBG# ]]
-	-- Create interface
-	--self.titleImage = love.graphics.newImage("Graphics/BattleDriveWikiLogo.png")
 	self:showSelectGameScreen();
 	self:updateUIGamesList();
 end
@@ -237,7 +218,7 @@ function MainMenuApp:showSelectGameScreen()
 
 		-- Game name sheet
 		local gameNameSheet = desk:newSheet(uiOriginX+5,uiOriginY+5,leftCollumnW,nameSheetH);
-		--gameNameSheet:setActive(false);
+		gameNameSheet:setActive(false);
 		self.gameNameSheet = gameNameSheet;
 		gameNameSheet:setName("GameName");
 		local gameNameSheetR = BDT_GUI.newSheetRenderer(gameNameSheet);
@@ -251,10 +232,11 @@ function MainMenuApp:showSelectGameScreen()
 		self.gameDescSheet = gameDescSheet;
 		gameDescSheet:setName("GameDesc");
 		local gameDescSheetR = BDT_GUI.newSheetRenderer(gameDescSheet);
-		local gameDescText = BDT_GUI.newSheetTextContent("...",5,5,self.fonts.kimberley12,leftCollumnW-10);
+		local gameDescText = BDT_GUI.newSheetTextContent("...",5,5,self.fonts.default12,leftCollumnW-10);
 		gameDescText:setAlign("left");
+		gameDescSheet:setActive(false);
 		gameDescSheetR:addContent(gameDescText);
-		self.gameDescText=gameDescText;
+		self.gameDescText = gameDescText;
 
 		-- Game list sheet
 		self.gameListSheet = desk:newSheet(rightCollumnX,uiOriginY+5,rightCollumnW,uiHeight-consoleHeight-10);
@@ -269,23 +251,18 @@ function MainMenuApp:showSelectGameScreen()
 		selectGameBtnSheetR:addContent(selectGameBtnText);
 		local handler = { -- button press handler
 			menuApp = self,
-			run=function (self)
+			run = function (self)
 				local menuApp = self.menuApp;
 				menuApp:launchSelectedGame();
 			end
 		};
 		selectGameBtnSheet:addEventHandler(BDT_GUI.events.MOUSEDOWN,handler);
 		selectGameBtnSheet:setName("SelectGameBtn");
-
-		--[[--#DBG_INFO#
-			print("BD Select game screen created.")--]]
 	else
 		desk:attachSheet(self.gameNameSheet);
 		desk:attachSheet(self.gameDescSheet);
 		desk:attachSheet(self.selectGameBtnSheet);
 		desk:attachSheet(self.gameListSheet);
-		--[[--#DBG_INFO#
-			print("BD Select game screen displayed.")--]]
 	end
 end;
 

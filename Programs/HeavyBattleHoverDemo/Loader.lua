@@ -4,6 +4,7 @@ local Loader = {};
 Loader.__index = Loader;
 
 function Loader:load(menuApp,gameDir)
+	print("\n ==== Heavy Battle Hover Demo: Loading ====");
 	local config = menuApp:getConfig();
 	local love_graphics = love.graphics;
 	love_graphics.clear();
@@ -15,6 +16,7 @@ function Loader:load(menuApp,gameDir)
 	local constructor = require(gameDir.."/Application.lua");
 	print("Heavy Battle Hover Demo Loader: 'Application.lua' script require()d in "..love_timer_getTime()-startTime.." seconds");
 	local app = constructor(menuApp,gameDir);
+	print(" ==== Heavy Battle Hover Demo: Start ====");
 	return app;
 end
 

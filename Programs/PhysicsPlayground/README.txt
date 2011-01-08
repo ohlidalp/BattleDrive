@@ -1,12 +1,17 @@
-Battledale README
+Physics Playground
+==================
 
-=== Window controls ===
-Orange bars scale the window.
-Orange squares in corners scale the window.
+Window controls
+---------------
+
+Side bars scale the window.
+Squares in corners scale the window.
 The gray area can be grabbed and dragged.
 The orange rectangle with crossed lines is a close button.
 
-==== Controls: ====
+Controls
+--------
+
 Arrow keys - move the main camera around the map
 
 P - opens a new physics viewport
