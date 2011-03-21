@@ -13,9 +13,10 @@ function Loader:load(menuApp,gameDir)
 	love_graphics.present();
 	local love_timer_getTime = love.timer.getTime;
 	local startTime = love_timer_getTime();
+	BDT_Entity     = BDT:loadLibrary("Entity");
 	local constructor = require(gameDir.."/Application.lua");
 	print("Heavy Battle Hover Demo Loader: 'Application.lua' script require()d in "..love_timer_getTime()-startTime.." seconds");
-	local app = constructor(menuApp,gameDir);
+	local app = constructor(menuApp, gameDir);
 	print(" ==== Heavy Battle Hover Demo: Start ====");
 	return app;
 end

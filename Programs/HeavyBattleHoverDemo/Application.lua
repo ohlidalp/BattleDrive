@@ -69,7 +69,7 @@ local HBHD_Config = {
 	helpH                        = 300;
 };
 HBHD_Config.vehicleSpec = {
-	---- Vehicle properties ----
+	-- -- Heavy battle hover -- --
 	speed=0;
 	maxForwardSpeed=300, -- Pixels per sec.
 	rotationSpeed=80; -- Degrees per sec.
@@ -82,6 +82,14 @@ HBHD_Config.vehicleSpec = {
 	maxReverseSpeed = -178, -- Must be a negative number
 	reverseSlowdown = 50,
 	forwardBrake = 133,
+}
+
+HBHD_Config.tankTurret = {
+	goLeftKey = love.key_q,
+	goRightKey = love.key_e,
+	toggleDirectControlKey = love.key_t,
+	turnSpeedRadians = math.pi/1.7; -- Radians per second
+	syncRotationKey = love.key_r;
 }
 
 local HBHD_App = {false,false,false,false,false};
@@ -220,7 +228,7 @@ function HBHD_App:draw()
 	end
 
 	-- Show the hover
-	bodyGrob:draw(bodyGrob:getPosition());
+	bodyGrob:draw(bodyGrob:getPositionXY());
 
 	-- Render GUI
 	self.desk:draw();
@@ -246,6 +254,13 @@ function HBHD_App:update(elapsed)
 	brit:update(elapsed);
 	bret:update(elapsed);
 end;
+
+--------------------------------------------------------------------------------
+-- Mouse motion callback. Not provided by LOVE, emulated in main.lua
+--------------------------------------------------------------------------------
+function HBHD_App:mouseMoved(newX, newY, oldX, oldY)
+
+end
 
 --------------------------------------------------------------------------------
 -- Handle a LOVE event
@@ -317,6 +332,7 @@ local function newHBHDApp(menuApp,gameDir)
 	local love_graphics_present = love_graphics.present;
 	local love_timer_getTime = love.timer.getTime;
 	local config = menuApp:getConfig();
+	local bdConfig = config;
 	local gameConfig = HBHD_Config;
 	local bdGraphicsDir = config.graphicsDir;
 
@@ -423,6 +439,7 @@ local function newHBHDApp(menuApp,gameDir)
 		keys.goForwardKey, keys.goBackwardKey, keys.goLeftKey, keys.goRightKey,
 		spec.rotationSpeed);
 	printOk();
+
 
 	-- Fonts
 	local menuFonts = menuApp:getFonts();
