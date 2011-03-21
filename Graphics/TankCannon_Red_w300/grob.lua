@@ -1,5 +1,5 @@
-Name=''
-NoAngles=36
+Name='TheTankCannon_Red_w300'
+NoVisualAngles=36
 local spritesDir=''
 Sprites={
 	{x=-19,y=-25.8125,path=spritesDir..'000.png'},
