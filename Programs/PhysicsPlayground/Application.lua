@@ -27,7 +27,14 @@ local config = {
 	-- tile size
 	tileW = 499;--500;
 	tileH = 349;--350;
-
+	mainCameraMoverSpec = {
+		accX = 200;--150;
+		accY = 200;--150;
+		slowX = 160;--166
+		slowY = 160;--166
+		maxX = 288;
+		maxY = 288;
+	};
 };
 -- Game map size. Physics world size is computed from this.
 config.mapW = config.tileW*10;
@@ -50,21 +57,31 @@ local controls = {
 	reset           = "r",
 	newMouseJoint   = "l",
 	units = {
-		spawnBall = love.key_b;
-		spawnPrism = love.key_h;
-		spawnTurretStand = love.key_u;
-		spawnBlasterTurret = love.key_t;
+		spawnBall          = "b";
+		spawnPrism         = "h";
+		spawnTurretStand   = "u";
+		spawnBlasterTurret = "t";
 	},
 	hover = {
-		goLeft = love.key_a;
-		goRight = love.key_d;
-		goForward = love.key_w;
-		goBackward = love.key_s;
+		goLeft     = "a";
+		goRight    = "d";
+		goForward  = "w";
+		goBackward = "s";
 	};
 
 };
 
 ----------------------------------- Utils --------------------------------------
+
+local function DBG_printTable(t)
+	if(type(t) ~= "table") then
+		error("DBG_printTable(): not a table, but "..type(t));
+	end
+	print("#"..#t);
+	for k,v in pairs(t) do
+		print("\t"..k..": "..type(v));
+	end
+end
 
 local Rectangle = {
 	__concat = function( op1, op2 )
@@ -220,7 +237,7 @@ function Application:keyPressed(key, unicode)
 	end;
 
 	if(key == self.controls.units.spawnBall ) then
-		--print("====spawn ball====\nmouseMapX",mouseMapX,"mouseMapY",mouseMapY);
+		print("====spawn ball====\nmouseMapX",mouseMapX,"mouseMapY",mouseMapY);
 		self:addEntity( self.units.spawnBall(
 			mouseMapX, mouseMapY, 0, Mod.settings.spawnUnitTeam ));
 	elseif(key==self.controls.units.spawnPrism) then
@@ -390,10 +407,7 @@ function Application:cleanup()
 
 end
 
-
-
 function Application:removePhysCamWindow( indexOrPointer )
-	print("Application:removePhysCamWindow() arg:"..tostring(indexOrPointer));
 	if( type(indexOrPointer)=="table" ) then
 		BDT.tableRemoveByValue(self.physCamWindows, indexOrPointer);
 	else
@@ -403,27 +417,29 @@ function Application:removePhysCamWindow( indexOrPointer )
 end
 
 function Application:addPhysCamWindow( _x, _y, _w, _h )
-	local window = BDT_GUI.shorthands.openEquippedWindow( self.desk, _x, _y, _w, _h );
+	local panel = BDT_GUI.widgets.newScalingWindow( _x, _y, _w, _h );
 	local app = self;
-	local closePhysCamWinFunction = function(self)
-		app:removePhysCamWindow(window);
-		window:detach();
-	end;
-	window.buttons.close.onMouseUp:add(closePhysCamWinFunction);
+	panel.buttons.close.onMouseUp:add(
+		function()
+			app:removePhysCamWindow(panel);
+			panel:detach();
+		end);
 	local viewport
-		= window:newSheet( 15, 15, _w-30, _h-30, BDT_GUI.arrange.fixedPosLinkedScale );
+		= panel:newSheet( 15, 15, _w-30, _h-30, BDT_GUI.arrangement.fixedPosLinkedScale );
 	--viewport.parentChanged = sheet_parentChangedLinkedScale;
-	local camera = BDT_PhysCamera:newPhysCamera( 5, 0.00000000001, 0.05, 0.05, {x=0,y=0}, viewport,
-		self.shapes, self.converter, self.mouseJointHolder );
-	window.camera = camera;
+	local camera = BDT_PhysCamera.newPhysCamera(
+			5, 0.00000000001, 0.05, 0.05,
+			{x=0,y=0},
+			viewport,
+			self.shapes,
+			self.converter,
+			self.mouseJointHolder );
+	panel.camera = camera;
 	viewport.onMouseDown:add(
 		function( sheet, x,y,button )
-			--print("<viewport onmousedown>, button ",button,"wheelup",love.mouse_wheelup);
 			if( button == love.mouse_wheelup  ) then
-				--print("<viewport> zoomin");
 				camera:zoomIn();
 			elseif( button == love.mouse_wheeldown ) then
-				--print("<viewport> zoomout");
 				camera:zoomOut();
 			end;
 		end );
@@ -435,8 +451,12 @@ function Application:addPhysCamWindow( _x, _y, _w, _h )
 		end );
 	viewport.onMouseOver:add( function() self.physViewportWithCursor = camera end );
 	viewport.onMouseOut:add( function() self.physViewportWithCursor = false end );
-	viewport.draw = function( self ) camera:draw() end;
-	table.insert( self.physCamWindows, 1, window );
+	--[[viewport.draw = function( self ) -- Overdrive the sheet's built in rendering method.
+		viewport.draw();
+		camera:draw();
+	end--]]
+	table.insert( self.physCamWindows, 1, panel );
+	self.desk:attachSheet(panel);
 end
 
 function Application:removeExtraGfxCamWindow( indexOrPointer )
@@ -446,8 +466,8 @@ function Application:removeExtraGfxCamWindow( indexOrPointer )
 	else
 		index = index or #self.extraGfxCamWindows;
 		table.remove( self.extraGfxCamWindows, index );
-	end;
-end;
+	end
+end
 
 function Application:addExtraGfxCamWindow( _x, _y, _w, _h )
 	local window = BDT_GUI.shorthands.openEquippedWindow( self.desk, _x, _y, _w, _h );
@@ -458,7 +478,7 @@ function Application:addExtraGfxCamWindow( _x, _y, _w, _h )
 	end;
 	local viewport = window:newSheet(
 		15, 15, _w-30, _h-30,
-		BDT_GUI.arrange.fixedPosLinkedScale );
+		BDT_GUI.arrangement.fixedPosLinkedScale );
 	window.camera = bd.newGfxCamera( Mod.map, {x=0;y=0}, viewport );
 	viewport.draw = function() window.camera:draw() end;
 	viewport.onDrag:add(
@@ -580,6 +600,9 @@ end;
 function Application:draw()
 	self.mainCamera:draw();
 	self.desk:draw();
+	for _, win in ipairs(self.physCamWindows) do
+		win.camera:draw();
+	end
 end;
 
 --------------------------------------------------------------------------------
@@ -591,7 +614,6 @@ return function(core)
 	local love_physics = love.physics;
 	local love_physics_newPolygonShape = love_physics.newPolygonShape;
 	local bdConfig = core:getConfig();
-	local grDir = bdConfig.graphicsDir;
 
 	local teams = {
 		player = {
@@ -614,9 +636,9 @@ return function(core)
 	};
 
 	local tileset = {};
-	tileset[1]=love_graphics_newImage(grDir.."/Grass_500x350.png");
-	tileset[2]=love_graphics_newImage(grDir.."/Grass_Greener_500x350.png");
-	tileset[3]=love_graphics_newImage(grDir.."/Pavement_500x350.png");
+	tileset[1]=love_graphics_newImage(bdConfig.graphicsDir.."/Grass_500x350.png");
+	tileset[2]=love_graphics_newImage(bdConfig.graphicsDir.."/Grass_Greener_500x350.png");
+	tileset[3]=love_graphics_newImage(bdConfig.graphicsDir.."/Pavement_500x350.png");
 
 	-- Shape list
 	local shapes = {
@@ -640,17 +662,14 @@ return function(core)
 		top = bpTop;
 		bottom = bpBottom;
 	};
-	print("DBG love.phys.World created");
 
 	-- Test shapes
 	shapes.staticPolys.tlRect = love_physics_newPolygonShape(
 			ground,  0,0,  20,15,  15,20 );
-	print("DBG tlRect created");
 	shapes.staticPolys.brRect = love_physics_newPolygonShape(
 			ground, worldW, worldH,
 			worldW - 20, worldH - 15,
 			worldW - 15, worldH - 20 );
-	print("DBG brRect created");
 
 	-- Map
 	local map = BDT_Map.newMap(
@@ -662,7 +681,7 @@ return function(core)
 	BDT_Instant.checkerMap( map, 1, 2, 3 );
 
 	-- Main camera
-	local mainCameraViewport = newRectangle( 10,10,780,580 );
+	local mainCameraViewport = newRectangle( 10, 10, bdConfig.screenW-20, bdConfig.screenH-20 );
 	local mainCamera = BDT_GfxCamera.newGfxCamera(
 		map,
 		newVector(map.pixelWidth/2, map.pixelHeight/2),
@@ -670,20 +689,16 @@ return function(core)
 	-- FIXME mainCamera.customDrawingFunctions:add(BDT_AI.drawTargetingLines);
 
 	-- Main camera mover (for controlling by keyboard)
-	local mainCameraMover = newXYMover( 150,150,  166,166,  288,288,
-		function(x,y)
-			mainCamera:moveOnMap(x,y)
-		end );
-
-
+	local mspec = config.mainCameraMoverSpec;
+	local mainCameraMover = newXYMover(
+			mspec.accX, mspec.accY, mspec.slowX, mspec.slowY, mspec.maxX, mspec.maxY,
+			function(x,y)
+				mainCamera:moveOnMap(x,y)
+			end );
 
 	-- Converters
 	local mapConverter = BDT_Common.newMapConverter();
 	local converter = BDT_Common.newLinearConverter();
-
-
-
-
 
 	local desk = BDT_GUI.newDesk();
 
@@ -702,6 +717,9 @@ return function(core)
 	rend:addContent(textArea);
 	textArea:setColor(config.helpColor);
 
+	-- Entities
+	local ballWS = BDT_Grob.newWorkshop(bdConfig.graphicsDir .. "/Grobs/PhysBall");
+	local ballShadowWS = BDT_Grob.newWorkshop(bdConfig.graphicsDir .. "/Grobs/PhysBallShadow");
 	return setmetatable({
 		core = core;
 		gameDir = gameDir;
