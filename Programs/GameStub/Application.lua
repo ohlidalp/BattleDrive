@@ -34,6 +34,27 @@ function Application:keyReleased(key)
 end
 
 --------------------------------------------------------------------------------
+-- Mouse motion callback. Not provided by LOVE, emulated in main.lua
+--------------------------------------------------------------------------------
+function Application:mouseMoved(newX, newY, oldX, oldY)
+
+end
+
+--------------------------------------------------------------------------------
+-- LOVE callback
+--------------------------------------------------------------------------------
+function Application:mousePressed( x, y, button )
+
+end
+
+--------------------------------------------------------------------------------
+-- LOVE callback
+--------------------------------------------------------------------------------
+function Application:mouseReleased( x, y, button )
+
+end
+
+--------------------------------------------------------------------------------
 -- Update LOVE callback
 -- @param dt DeltaTime - time since last update in seconds.
 --------------------------------------------------------------------------------
@@ -52,6 +73,12 @@ end
 function Application:handleEvent(e,a,b,c,d)
 	if e == "kp" then
 		self:keyPressed(a,b);
+	elseif e == "kr" then
+		self:keyReleased(a);
+	elseif e == "mp" then
+		self:mousePressed(a,b,c);
+	elseif e == "mr" then
+		self:mouseReleased(a,b,c);
 	end
 end
 
