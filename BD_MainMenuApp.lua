@@ -268,22 +268,20 @@ end;
 
 function MainMenuApp:draw()
 	self.desk:draw();
+end
 
+function MainMenuApp:mouseMoved(x, y, oldX, oldY)
+	self.desk:mouseMoved(x, y, oldX, oldY);
 end
 
 function MainMenuApp:update(dt)
-	local love_mouse = love.mouse;
-	local mouseX = love_mouse.getX();
-	local mouseY = love_mouse.getY();
-	if( mouseX~=self.lastMouseX or mouseY~=self.lastMouseY ) then
-		self.desk:mouseMoved(mouseX,mouseY,self.lastMouseX,self.lastMouseY);
-		self.lastMouseX=mouseX;
-		self.lastMouseY=mouseY;
-	end
+
 end
 
 function MainMenuApp:keyPressed(key,unicode)
-	--self.desk:keyPressed(key,unicode);
+	if key == "escape" then
+		BD_Exit = true;
+	end
 end
 
 function MainMenuApp:keyReleased(key)
@@ -347,16 +345,7 @@ end
 -- @param font12 LOVE.graphics.Font Default font at size 12, or nil
 --------------------------------------------------------------------------------
 function newMainMenuApp(config,font12)
-	local config = {
-		gamesDir = config.gamesDir,
-		graphicsDir = config.graphicsDir,
-		frameworkDir = config.frameworkDir,
-		gamesListItemHeight=30;
-		selectGameScreen_RightCollumnWidth=400;
-		uiHeight = 650;
-		uiWidth = 1000;
-		fonts = {default12=font12}
-	};
+	config.fonts.default12 = font12;
 	local handlers = {
 		kp = MainMenuApp.keyPressed,
 		kr = MainMenuApp.keyReleased,
@@ -364,11 +353,11 @@ function newMainMenuApp(config,font12)
 		mr = MainMenuApp.mouseReleased
 	}
 	return setmetatable({
-		config=config;
+		config = config;
 		screenDirty = true;
 		lastMouseX = 0;
 		lastMouseY = 0;
-		fonts = {},
+		fonts = config.fonts,
 		handlers = handlers
 	},
 	MainMenuApp);

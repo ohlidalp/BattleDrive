@@ -1,19 +1,25 @@
 --------------------------------------------------------------------------------
--- @class table
--- @name class SheetTextContent
+-- This file is part of BattleDrive project.
+-- @package BDT_GUI
+--------------------------------------------------------------------------------
+--module("BDT_GUI.BDT_GUI_SheetTextContent");
+
+--------------------------------------------------------------------------------
+-- @class class
+-- @name SheetTextContent
 -- @description Renders a text label in the sheet.
--- @field colorR number Text color component.
--- @field colorG number Text color component.
--- @field colorB number Text color component.
--- @field colorA number Text color component.
--- @field bgColorR number Background color component.
--- @field bgColorG number Background color component.
--- @field bgColorB number Background color component.
--- @field bgColorA number Background color component.
--- @field sheet Table(Sheet); the Sheet to render.
--- @field offsetX Number; X offset of the text
--- @field offsetY Number; Y offset of the text
--- @field align string One of LOVE's alignment constants.
+-- @field colorR : number Text color component.
+-- @field colorG : number Text color component.
+-- @field colorB : number Text color component.
+-- @field colorA : number Text color component.
+-- @field bgColorR : number Background color component.
+-- @field bgColorG : number Background color component.
+-- @field bgColorB : number Background color component.
+-- @field bgColorA : number Background color component.
+-- @field sheet : Sheet the Sheet to render.
+-- @field offsetX : Number X offset of the text
+-- @field offsetY : Number Y offset of the text
+-- @field align : string One of LOVE's alignment constants.
 --------------------------------------------------------------------------------
 
 local love = love;
@@ -30,8 +36,10 @@ local SheetTextContent = {
 };
 SheetTextContent.__index = SheetTextContent;
 
--- OLD sheet,text,font,color,bgColor,offsetX,offsetY,limit)
-function BDT_GUI.newSheetTextContent(text,offsetX,offsetY,font,limit)
+--------------------------------------------------------------------------------
+--
+--------------------------------------------------------------------------------
+function BDT_GUI.newSheetTextContent(text, offsetX, offsetY, font, limit)
 	if not font and not love.graphics.getFont() then
 		error("ERROR: BDT_GUI.newSheetTextContent(): No font available");
 	end

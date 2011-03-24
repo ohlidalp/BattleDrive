@@ -1,22 +1,27 @@
+--------------------------------------------------------------------------------
+-- This file is part of BattleDrive project.
+-- @package BDT_GUI
+--------------------------------------------------------------------------------
+-- module("BDT_GUI.BDT_GUI_SheetRenderer");
 
 return function (BDT_GUI) -- Enclosing function
 
 --------------------------------------------------------------------------------
--- @class table
--- @name class SheetRenderer
+-- @class class
+-- @name SheetRenderer
 -- @description Basic sheet renderer.
--- @field contents table Table of SheetContent objects.
--- @field palette Palette Table with colors.
--- @field lineColorTL table{r,g,b,a} Outline color for top and left border.
--- @field lineColorBR table{r,g,b,a} Outline color for bottom and right border.
--- @field fillColor table{r,g,b,a}
+-- @field contents : table Table of SheetContent objects.
+-- @field palette : Palette Table with colors.
+-- @field lineColorTL : Color Outline color for top and left border.
+-- @field lineColorBR : Color Outline color for bottom and right border.
+-- @field fillColor : Color
 --------------------------------------------------------------------------------
 local SheetRenderer = {};
 SheetRenderer.__index = SheetRenderer;
 
 --------------------------------------------------------------------------------
 -- Creates a new SheetRenderer
--- @param aSheet Sheet Sheet to attach this renderer to. Can be nil.
+-- @param aSheet:Sheet Sheet to attach this renderer to. Can be nil.
 --------------------------------------------------------------------------------
 function BDT_GUI.newSheetRenderer(aSheet)
 	if aSheet ~= nil and not BDT_GUI.isInstanceOfSheet(aSheet) then

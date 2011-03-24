@@ -1,49 +1,46 @@
+--------------------------------------------------------------------------------
+-- This file is part of BattleDrive project.
+-- @package BDT_Turntable
+-- @description This module provides an universal implementation of a rotating plattform; The class rotates a graphical entity to reach a given angle or aim at given coordinates; It's made to be used with grob as a graphical entity, but will work the same with any object which fits the GrobCompatible interface.
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+-- @class class
+-- @name GrobCompatible
+-- @description This interface shows methods which are needed in a graphical representation of a turntable.
+
+--- Returns the turret's position in the game world (in pixels).
+-- @class function
+-- @name GrobCompatible:getPosition
+-- @return : number X
+-- @return : number Y
+-- @return : number H
+
+--- Change the angle of turret's graphical representation (in radians).
+-- @class function
+-- @name GrobCompatible:rotateRadians
+-- @param a Angle to rotate
+
+--- Gets the angle of attached object.
+-- @class function
+-- @name GrobCompatible:getAngleRadians
+-- @return : number Angle in radians
+
+--- Get the angle of the current sprite
+-- @class function
+-- @name GrobCompatible:getVisualAngleRadians
+-- @return : number Angle in radians
+
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+-- @class class
+-- @name Turntable
+-- @description A rotating plattform.
+--------------------------------------------------------------------------------
+
 --[[
-________________________________________________________________________________
-
-                                                                    BD_Turntable
-                                                                 Version: Beta 1
-                         Copyright (C) 2009-2010 Petr Ohlidal <An00biS@email.cz>
-
-_________________________________ License ______________________________________
-
-This software is provided 'as-is', without any express or implied
-warranty.  In no event will the authors be held liable for any damages
-arising from the use of this software.
-
-Permission is granted to anyone to use this software for any purpose,
-including commercial applications, and to alter it and redistribute it
-freely, subject to the following restrictions:
-
-1. The origin of this software must not be misrepresented; you must not
-	claim that you wrote the original software. If you use this software
-	in a product, an acknowledgment in the product documentation would be
-	appreciated but is not required.
-2. Altered source versions must be plainly marked as such, and must not be
-	misrepresented as being the original software.
-3. This notice may not be removed or altered from any source distribution.
-
-________________________________ Description ___________________________________
-
-
-
-Module:
-	+ newTurntable(grob, turnSpeed, goRightKey, goLeftKey)
-
-
---
-Interface TurntableGrobCompatible:
-	-- Returns the turret's position in the game world in pixels.
-	+ getPosition() : Number, Number, Number
-	-- Change the angle of turret's graphical representation (in radians).
-	+ rotateRadians() : Nil
-	-- Gets the angle of graphic.
-	+ getAngleRadians() : Number
-	-- Get the angle of the current sprite
-	+ getVisualAngleRadians() : Number
-
-Class Turntable:
-Attributes:
+Attributes: (INTERNAL - do NOT reference!)
 	- turnSpeed : Number -- Rotation speed in radians per second
 	-- Direction to rotate. 1 means positive, -1 means negative.
 	-- 0 means the gun is aimed and no rotation is required.
@@ -63,45 +60,7 @@ Attributes:
 	-- The angle difference between target angle and current angle.
 	-- Always a positive number.
 	- radiansLeftToRotate
-Methods:
-	+ aimAt(x,y) : Nil
-	-- Sets the grob. Only accepts a table.
-	+ setGrob(grob) : Nil
-	-- Gets the grob
-	+ getGrob() : Table(GrobCompatible)
-	+ isAimed() : Boolean
-	-- Stops the rotation process.
-	+ stop() : Nil
-	+ setDirectControl( directControl:Boolean ): Nil
-	+ getDirectControl() : Boolean
-________________________________________________________________________________
-
 --]]
-
---------------------------------------------------------------------------------
--- @class table
--- @name BDT_Turntable module interface
--- @description This module provides an universal implementation of a rotating plattform; The class rotates a graphical entity to reach a given angle or aim at given coordinates; It's made to be used with grob as a graphical entity, but will work the same with any object which fits the GrobCompatible interface.
---------------------------------------------------------------------------------
-
---------------------------------------------------------------------------------
--- @class table
--- @name interface GrobCompatible
--- @description This interface shows methods which are needed in a graphical representation of a turntable.
-
---- Returns the turret's position in the game world (in pixels).
--- @class function
--- @name GrobCompatible:getPosition
--- @return number X
--- @return number Y
--- @return number H
-
---- Change the angle of turret's graphical representation (in radians).
--- @class function
--- @name GrobCompatible:rotateRadians
--- @param a Angle to rotate
-
---------------------------------------------------------------------------------
 
 --______________________________________________________________________________
 --                                Utilities
@@ -134,11 +93,11 @@ local _2PI = 2*math_pi;
 
 local PUBLIC = {};
 
--- ________________________________________________________________
+--------------------------------------------------------------------------------
 --                           Turntable
 -- This class links to a sprite or grob (which represents a cannon)
 -- and provides an universal implementation of a turret.
-
+--------------------------------------------------------------------------------
 local Turntable = {};
 Turntable.__index = Turntable;
 
@@ -183,12 +142,30 @@ function PUBLIC.newTurntable(grob, turnSpeed, goRightKey, goLeftKey)
 		},
 			Turntable
 		);
-end;
+end
 
+--------------------------------------------------------------------------------
+-- Enables/disables keyboard control
+-- @param value : boolean
+--------------------------------------------------------------------------------
+function Turntable:enableKeyboardControl(value)
+	self.directControl = value;
+end
 
---- set the gun's target angle
--- targetX, targetY are the map coordinates (pixels) to shoot at
--- @param direction Negative or positive number to decide the rotation path. 0 uses the shorter path.
+--------------------------------------------------------------------------------
+-- Tells if keyboard control is active
+-- @return : boolean True if keyboard control is active
+--------------------------------------------------------------------------------
+function Turntable:isKeyboardControlEnabled()
+	return self.directControl
+end
+
+--------------------------------------------------------------------------------
+-- set the gun's target angle
+-- @param targetX : number Map coordinates (pixels) to shoot at
+-- @param targetY : number Map coordinates (pixels) to shoot at
+-- @param direction : number Negative or positive number to decide the rotation path. 0 uses the shorter path.
+--------------------------------------------------------------------------------
 function Turntable:aimAt(targetX, targetY, direction)
 	if not self.directControl then
 		local gunX, gunY, gunH = self.grob:getPosition();
@@ -258,6 +235,9 @@ function Turntable:aimAt(targetX, targetY, direction)
 	end
 end;
 
+--------------------------------------------------------------------------------
+-- @param elapsed : number Delta time in seconds
+--------------------------------------------------------------------------------
 function Turntable:update(elapsed)
 	--[[
 	console:printLn(string.format(
@@ -285,10 +265,16 @@ function Turntable:update(elapsed)
 	end;
 end;
 
+--------------------------------------------------------------------------------
+-- @return : GrobCompatible
+--------------------------------------------------------------------------------
 function Turntable:getGrob()
 	return self.grob;
 end
 
+--------------------------------------------------------------------------------
+-- @param grob : GrobCompatible
+--------------------------------------------------------------------------------
 function Turntable:setGrob(grob)
 	if checkTurntableGrobCompatible(grob)==false then
 		error("<BD_Turntable> Turtable:setGrob: argument #1 'grob' is invalid."
@@ -296,33 +282,50 @@ function Turntable:setGrob(grob)
 	end
 end
 
+--------------------------------------------------------------------------------
+--
+--------------------------------------------------------------------------------
 function Turntable:getAngleRadians()
 	return self.grob:getAngleRadians();
 end
 
+--------------------------------------------------------------------------------
+--
+--------------------------------------------------------------------------------
 function Turntable:getVisualAngleRadians()
 	return self.grob:getVisualAngleRadians();
 end
 
+--------------------------------------------------------------------------------
+-- Stops the rotation process.
+--------------------------------------------------------------------------------
 function Turntable:stop()
 	self.aimingDirection=0;
 	self.targetX, self.targetY = 0,0;
-end;
+end
 
+--------------------------------------------------------------------------------
+--
+--------------------------------------------------------------------------------
 function Turntable:keyPressed(k)
-	--[[
-	print("<Turtable:keyPressed>\n\tkey:"..tostring(k).." goRight:"..tostring(self.goRightKey)
-		.." goLeft:"..tostring(self.goLeftKey));
-	--]]
 	if self.directControl then
-		if k==self.goRightKey then
+		if k == self.goRightKey then
 			self.goRight = true;
-		elseif k==self.goLeftKey then
+		elseif k == self.goLeftKey then
 			self.goLeft = true;
 		end
 	end
+	--[ [ DEBUG
+	print(string.format("DBG Turtable:keyPressed()\n" ..
+			"\tkeyControlActive: %s, key:%s, goRightKey:%s, goLeftKey:%s, goRight:%s, goLeft:%s",
+			tostring(self.directControl), k, self.goRightKey, self.goLeftKey,
+			tostring(self.goRight), tostring(self.goLeft)));
+	--]]
 end
 
+--------------------------------------------------------------------------------
+--
+--------------------------------------------------------------------------------
 function Turntable:keyReleased(k)
 	if self.directControl then
 		if k==self.goLeftKey then
@@ -333,26 +336,32 @@ function Turntable:keyReleased(k)
 	end
 end
 
+--------------------------------------------------------------------------------
+-- Start turning turret right
+-- @param r : boolean Movement toggle.
+--------------------------------------------------------------------------------
 function Turntable:setGoRight(r)
 	self.goRight = r;
 end
 
+--------------------------------------------------------------------------------
+-- Start turning turret left
+-- @param l : boolean Movement toggle.
+--------------------------------------------------------------------------------
 function Turntable:setGoLeft(l)
 	self.goLeft = l
 end
 
-function Turntable:setDirectControl(value)
-	self.directControl = value==true;
-end
-
-function Turntable:getDirectControl()
-	return self.directControl;
-end
-
+--------------------------------------------------------------------------------
+--
+--------------------------------------------------------------------------------
 function Turntable:setRespectHeight(r)
 	self.respectHeight = r;
 end
 
+--------------------------------------------------------------------------------
+--
+--------------------------------------------------------------------------------
 function Turntable:getRespectHeight()
 	return self.respectHeight;
 end

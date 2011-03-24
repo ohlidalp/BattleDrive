@@ -26,20 +26,22 @@ freely, subject to the following restrictions:
 
 ________________________________ Description ___________________________________
 
-A grob is an object that encapsulates an organized set of sprites which
-together form a pseudo-3D rotating graphical entity, useful for games.
-
-_________________________________ Reference ____________________________________
+--------------------------------------------------------------------------------
+-- @package BDT_Grob
+-- @description Grob = GRaphical OBject, semi-automated isometric sprites logic.
+--------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 -- @class table
--- @name BDT_Grob package
+-- @name BDT_Grob constants
 -- @description A grob is an object that encapsulates an organized set of sprites which together form a pseudo-3D rotating graphical entity, useful for games.
 -- @field ANGLE_UPDATE_FOLLOW Designates the grob's reaction to rotation of it's parent; Grob rotates along (default)
 -- @field ANGLE_UPDATE_IGNORE Ditto; Grob ignores the rotation
 -- @field ANGLE_UPDATE_SKIP Ditto; Grob ignores the update, but passes it to it's child grobs.
 --------------------------------------------------------------------------------
 ]]
+
+-- module("BDT_Grob.BDT_Grob");
 
 -- -- Optimization ----
 local love = love;
@@ -103,16 +105,16 @@ local ANGLE_UPDATE_SKIP = 3 -- Grob ignores the update, but passes it to it's ch
 -- RULE: methods using radians are frontends for methods using degrees.
 
 --------------------------------------------------------------------------------
--- @class table
--- @name class Grob
--- @description Common grob logic.
--- @field noAngles number Number of visual angles this grob can present.
--- @field spriteIndex number The current visual angle (sprite index) ( from 1 to noAngles )
--- @field angle number Grob's angle in degrees, 0 being straight down.
--- @field pegs Table { { name, position/positions } } Array of pegs; A peg is a point defined on the grob with regard to it's rotation; There is either a single PegOffset for all angles or one PegOffset per angle; PegOffset is a {x,y,h} table, where x and y are the offset from pivot point and h is the height (y distance from ground level).
--- @field imageAreas Table{ {x1, y1, x2, y2} } Areas which this grob's sprites occupy on the map, defined as AABBs; Field's not present if 'singleImageArea' is defined.
--- @field singleImageArea Table{x1, y1, x2, y2} Areas which this grob's sprite occupies on the map, defined as AABB; Field's not present if 'imageAreas' is defined.
--- @field children table{ [: SubGrob/False :] } Grobs attached to this one as child grobs; Table index = peg index -1 (slot #1 is reserved for pivot-mounted grob); This table is allways preallocated with "false" values (to enable ipairs())
+-- @class class
+-- @name Grob
+-- @description A grob is an object that encapsulates an organized set of sprites which together form a pseudo-3D rotating graphical entity, useful for games.
+-- @field noAngles : number Number of visual angles this grob can present.
+-- @field spriteIndex : number The current visual angle (sprite index) ( from 1 to noAngles )
+-- @field angle : number Grob's angle in degrees, 0 being straight down.
+-- @field pegs : Table { { name, position/positions } } Array of pegs; A peg is a point defined on the grob with regard to it's rotation; There is either a single PegOffset for all angles or one PegOffset per angle; PegOffset is a {x,y,h} table, where x and y are the offset from pivot point and h is the height (y distance from ground level).
+-- @field imageAreas : Table{ {x1, y1, x2, y2} } Areas which this grob's sprites occupy on the map, defined as AABBs; Field's not present if 'singleImageArea' is defined.
+-- @field singleImageArea : Table{x1, y1, x2, y2} Areas which this grob's sprite occupies on the map, defined as AABB; Field's not present if 'imageAreas' is defined.
+-- @field children : table{ [: SubGrob/False :] } Grobs attached to this one as child grobs; Table index = peg index -1 (slot #1 is reserved for pivot-mounted grob); This table is allways preallocated with "false" values (to enable ipairs())
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -446,11 +448,14 @@ end;
 --------------------------------------------------------------------------------
 -- Returns <x,y> the map position (in pixels). Height is substracted from Y.
 -- @class function
--- @name Grob:getPositionXY
+-- @name RootGrob:getPositionXY
 -- @param none nil
 -- @return number X position
 -- @return number Y position
 --------------------------------------------------------------------------------
+local function RootGrob__getPositionXY(self)
+	return self.x, self.y - self.h;
+end;
 
 --------------------------------------------------------------------------------
 -- returns <x1, y1, x2, y2>, area which this grob visually occupies on the map (in pixels); Only considers one grob, even if it's the root; To get the complete area occupied by a grob hierarchy, use RootGrob__getFullImageArea()
@@ -488,46 +493,49 @@ local RootGrob__getPegRootOffset = Grob__getPegOffset;
 -- Fetches a child grob.
 -- @class function
 -- @name Grob:getChild
--- @param pegIndexOrName string/number Numeric index (counted from 1) or name of the peg.
--- @return Grob The child grob.
+-- @param pegIndexOrName : string/number Numeric index (counted from 1) or name of the peg.
+-- @return : Grob The child grob.
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 -- Callback to notify the root grob about new sub-grob.
 -- @class function
 -- @name Grob:childAdded
--- @param grob Grob The added subgrob.
--- @param drawPriority number
+-- @param grob : Grob The added subgrob.
+-- @param drawPriority : number
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 -- Callback to notify the root grob about removed sub-grob
 -- @class function
 -- @name Grob:childRemoved
--- @param grob Grob The removed subgrob.
+-- @param grob : Grob The removed subgrob.
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 -- Renders the grob
 -- @class function
 -- @name Grob:draw
--- @param x number Grob's screen position
--- @param y number Grob's screen position
+-- @param x : number Grob's screen position
+-- @param y : number Grob's screen position
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- @class table
--- @name class RootGrob extends Grob
+-- @class class
+-- @name RootGrob
 -- @description Root object of grob tree; Can be independently positioned
--- @field x number Map position in pixels
--- @field y number Map position in pixels
--- @field h number Map position in pixels (virtual height, substracts from Y)
--- @field z number the grob's drawing order index (y-axis coordinate of shade's bottom border)
--- @field zMod number Z index modifier. Added to z index to prevent 2 grobs having the same z; Default is 0, sorting functions increase it by 0.1 and less; When 2 grobs have same z and overlap, the drawing order is random; That may create an unpleasant 'blinking' effect.
--- @field drawingOrder table links to all grobs which should be drawn with "draw()" method; The order in this array is the drawing order of the member grobs; 1 = highest priority (drawn first); There is no built-in sorting mechanism for the drawing order.
--- @field singleShade table{x,y,w,h} Shade (in general) = area {x,y,w,h} where grob 'touches the ground'; singleShade = just one shade which applies to all sprites; this field is mutually exclusive with 'shades' field.
--- @field shades table{ Shade } table of shades, one per sprite; this field is mutually exclusive with 'singleShade'
 --------------------------------------------------------------------------------
+
+--[[ Attributes (Internal, do not reference!)
+-- @field x : number Map position in pixels
+-- @field y : number Map position in pixels
+-- @field h : number Map position in pixels (virtual height, substracts from Y)
+-- @field z : number the grob's drawing order index (y-axis coordinate of shade's bottom border)
+-- @field zMod : number Z index modifier. Added to z index to prevent 2 grobs having the same z; Default is 0, sorting functions increase it by 0.1 and less; When 2 grobs have same z and overlap, the drawing order is random; That may create an unpleasant 'blinking' effect.
+-- @field drawingOrder : table links to all grobs which should be drawn with "draw()" method; The order in this array is the drawing order of the member grobs; 1 = highest priority (drawn first); There is no built-in sorting mechanism for the drawing order.
+-- @field singleShade : table{x,y,w,h} Shade (in general) = area {x,y,w,h} where grob 'touches the ground'; singleShade = just one shade which applies to all sprites; this field is mutually exclusive with 'shades' field.
+-- @field shades  : table{Shade} table of shades, one per sprite; this field is mutually exclusive with 'singleShade'
+--]]
 
 --------------------------------------------------------------------------------
 -- Angle setter function (uses rotation function, rotates in positive dir); Frontend to setAngleDegrees().
@@ -552,6 +560,9 @@ end;
 --------------------------------------------------------------------------------
 local function RootGrob__getPegPosition( self,pegIndexOrName )
 	local pegX, pegY, pegH = self:getPegOffset(pegIndexOrName);
+	--[ [
+	print(string.format("DBG RootGrob::getPegPosition() Offset: x%f y%f z%f", pegX, pegY, pegH));
+	--]]
 	return self.x+pegX, self.y+pegY, self.h+pegH;
 end;
 
@@ -566,9 +577,7 @@ end;
 -- @return number shade's height
 --------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------
 -- Implementation of 'getShade' for single shade.
---------------------------------------------------------------------------------
 local function RootGrob__getShade_SingleShade( self )
 	--[[
 	print("<RootGrob__getShade_SingleShade( self )>:"..
@@ -582,9 +591,7 @@ local function RootGrob__getShade_SingleShade( self )
 		self.singleShade.h;
 end;
 
---------------------------------------------------------------------------------
 -- Implementation of 'getShade' for multiple shades.
---------------------------------------------------------------------------------
 local function RootGrob__getShade_ShadePerSprite( self )
 	--[[
 	print("<RootGrob__getShade_ShadePerSprite> self.shades:"
@@ -611,9 +618,7 @@ end;
 -- @return number X2 (right border)
 --------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------
 -- Implementation of 'Grob:getImageArea' for multiple image areas.
---------------------------------------------------------------------------------
 local function RootGrob__getImageArea_AreaPerSprite(self)
 	--[[
 	print("<RootGrob__getImageArea_AreaPerSprite> spriteIndex:",self.spriteIndex);
@@ -626,9 +631,7 @@ local function RootGrob__getImageArea_AreaPerSprite(self)
 		self.y+self.imageAreas[self.spriteIndex].y2;
 end;
 
---------------------------------------------------------------------------------
 -- Implementation of 'Grob:getImageArea' for single image area.
---------------------------------------------------------------------------------
 local function RootGrob__getImageArea_SingleArea(self)
 	return
 		self.x+self.singleImageArea.x1,
@@ -648,9 +651,7 @@ end;
 -- @return number X2 (right border)
 --------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------
 -- Implementation of 'Grob:getImageArea' for multiple image areas.
---------------------------------------------------------------------------------
 local function RootGrob__getMaxImageArea_AreaPerSprite(self)
 	local x1,y1,x2,y2 = 1000000,1000000,-1000000,-1000000;
 	for index, area in ipairs(self.imageAreas)do
@@ -669,12 +670,13 @@ local RootGrob__getMaxImageArea_SingleArea
 -- Returns <x1, y1, x2, y2> the union of areas occupied by grobs in a given hierarchy
 -- @class function
 -- @name Grob:getFullImageArea
--- @param none nil
--- @return number X1 (top border)
--- @return number Y1 (left border)
--- @return number X2 (bottom border)
--- @return number X2 (right border)
+-- @return : number X1 (top border)
+-- @return : number Y1 (left border)
+-- @return : number X2 (bottom border)
+-- @return : number X2 (right border)
 --------------------------------------------------------------------------------
+
+-- Implementation of 'Grob:getImageArea' for multiple image areas.
 local function RootGrob__getFullImageArea(self)
 	local x1min = 10e9;
 	local y1min=10e9;
@@ -763,6 +765,8 @@ end;
 -- @name Grob:childRemoved
 -- @param grobReference Grob The removed subgrob.
 --------------------------------------------------------------------------------
+
+-- Implementation
 local function RootGrob__childRemoved(self, grobReference)
 	BDT.tableRemoveByValue(self.drawingOrder, grobReference);
 end;
@@ -836,9 +840,12 @@ end;
 --============================= subgrob =====================================
 
 --------------------------------------------------------------------------------
--- @class table
--- @name class RootGrob extends Grob
--- @description Root object of grob tree; Can be independently positioned
+-- @class class
+-- @name SubGrob
+-- @description Grob without it's own position info; must be attached to a hierarchy.
+--------------------------------------------------------------------------------
+
+--[[ Attribures
 -- @field parentGrob Grob a pointer to the parent grob.
 -- @field pegIndex number Index of the parent grob's peg this SubGrob is attached to.
 -- @field displacementX The subgrob's displacement against the parent's peg (X axis)
@@ -848,7 +855,7 @@ end;
 -- @field angleSyncData number Stores the angle difference between unsynchronized angle and synchronized angle; It only needs to be recalculated when this sub-grob rotates itself, otherwise it can be re-used.
 -- @field angleInSync boolean Tells if the sync data are valid.
 -- @field angleUpdateHandling number One of ANGLE_UPDATE constants, designating the reaction to parent's rotation.
---------------------------------------------------------------------------------
+--]]
 
 --------------------------------------------------------------------------------
 -- Callback notifying the grob about parent's angle change
@@ -986,7 +993,6 @@ end;
 -- returns <x1, y1, x2, y2>, area which this grob visually occupies on the map (in pixels); Only considers one grob, even if it's the root; To get the complete area occupied by a grob hierarchy, use RootGrob__getFullImageArea()
 -- @class function
 -- @name Grob:getImageArea
--- @param none nil
 -- @return number X1 (top border)
 -- @return number Y1 (left border)
 -- @return number X2 (bottom border)
@@ -1256,23 +1262,26 @@ local function RootGrob__removeLinkedGrob(self, g)
 end;
 -- ====================================================== --]]
 
-local BDT_GROB = {};
-BDT_GROB.ANGLE_UPDATE_FOLLOW = ANGLE_UPDATE_FOLLOW;
-BDT_GROB.ANGLE_UPDATE_IGNORE = ANGLE_UPDATE_IGNORE;
-BDT_GROB.ANGLE_UPDATE_SKIP = ANGLE_UPDATE_SKIP;
+local BDT_Grob = {};
+BDT_Grob.ANGLE_UPDATE_FOLLOW = ANGLE_UPDATE_FOLLOW;
+BDT_Grob.ANGLE_UPDATE_IGNORE = ANGLE_UPDATE_IGNORE;
+BDT_Grob.ANGLE_UPDATE_SKIP = ANGLE_UPDATE_SKIP;
 
 --------------------------------------------------------------------------------
--- @class table
--- @name class Workshop
+-- @class class
+-- @name Workshop
 -- @description Workshop is a factory object for building grobs
+--------------------------------------------------------------------------------
+
+--[[
 -- @field imagesToLoad Table{ [: {x,y,path} :] }; List of images to load; Needed for partial loading; Only not loaded images are listed, loaded are deleted.
 -- @field grobDir String; Directory to load images from
---------------------------------------------------------------------------------
+--]]
 local Workshop = {};
 Workshop.__index = Workshop;
 
 --------------------------------------------------------------------------------
--- Builds a basic grob
+-- INTERNAL; Builds a basic grob.
 -- @return Grob
 --------------------------------------------------------------------------------
 function Workshop:buildGrob()
@@ -1292,11 +1301,12 @@ function Workshop:buildGrob()
 end
 
 --------------------------------------------------------------------------------
--- Builds a root grob; Root grobs forms a base of grob hierarchy; Can be positioned directly.
--- @param x Initial X position.
--- @param y Initial Y position.
--- @param h Initial position - virtual height.
--- @return RootGrob
+-- Builds a root grob.
+-- Root grobs forms a base of grob hierarchy. Can be positioned directly.
+-- @param x : number Initial X position.
+-- @param y : number Initial Y position.
+-- @param h : number Initial position - virtual height.
+-- @return : RootGrob
 --------------------------------------------------------------------------------
 function Workshop:buildRoot( x,y,h )
 	if self.imagesToLoad and #self.imagesToLoad>0 then
@@ -1331,7 +1341,7 @@ end;
 
 --------------------------------------------------------------------------------
 -- Builds a sub grob; SubGrobs are made to be mounted into a grob hierarchy; Cannot be positioned directly.
--- @return SubGrob
+-- @return : SubGrob
 --------------------------------------------------------------------------------
 function Workshop:buildSub()
 	if self.imagesToLoad and #self.imagesToLoad>0 then
@@ -1358,7 +1368,7 @@ end;
 
 --------------------------------------------------------------------------------
 -- Load next image.
--- @return boolean true on success, or false if there is nothing more to load.
+-- @return : boolean true on success, or false if there is nothing more to load.
 --------------------------------------------------------------------------------
 function Workshop:loadNextImage()
 	if self.imagesToLoad and #self.imagesToLoad>0 then
@@ -1374,7 +1384,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the path of the next image to be loaded
--- @return string Image path or empty string if there's nothing more to load.
+-- @return : string Image path or empty string if there's nothing more to load.
 --------------------------------------------------------------------------------
 function Workshop:getNextImagePath()
 	if self.imagesToLoad and #self.imagesToLoad>0 then
@@ -1384,7 +1394,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the number of images to load
--- @return number Number of images to load
+-- @return : number Number of images to load
 --------------------------------------------------------------------------------
 function Workshop:getNoImagesToLoad()
 	if self.imagesToLoad then
@@ -1394,9 +1404,10 @@ function Workshop:getNoImagesToLoad()
 	end
 end
 
-local grobfileNamesToTry={
-	"grobfile.lua",
-	"Grobfile.lua",
+local defFileNamesToTry={
+	"grobdef.lua",
+	"Grobdef.lua",
+	"GrobDef.lua",
 	"grob.lua",
 	"Grob.lua"
 }
@@ -1405,34 +1416,34 @@ return function(BDT_Grob_Dir) -- Module init function
 
 --------------------------------------------------------------------------------
 -- Creates a new Workshop (factory for grobs)
--- @param dir string Directory to load grob from (without slash)
--- @param grobfileName string The name of grobfile.
--- @param partialLoading boolean Enables loading images one by one using the loadNextImage method. Default false.
--- @return Workshop
+-- @param dir : string Directory to load grob from (without slash)
+-- @param grobfileName : string The name of grobdef.
+-- @param partialLoading : boolean Enables loading images one by one using the loadNextImage method. Default false.
+-- @return : Workshop
 --------------------------------------------------------------------------------
-function BDT_GROB.newWorkshop(dir, grobfileName, partialLoading)
-	local errMsg = "ERROR BDT_GROB.newWorkshop():";
+function BDT_Grob.newWorkshop(dir, grobfileName, partialLoading)
+	local errMsg = "ERROR BDT_Grob.newWorkshop():";
+	if not grobfileName then
+		grobfileName = "/grob.lua"
+	end
+	BDT.checkArg("BDT_Grob.newWorkshop", "grobfileName", grobfileName, "string");
+	BDT.checkArg("BDT_Grob.newWorkshop", "dir", dir, "string");
 	local newGrobSprite = require(BDT_Grob_Dir.."/BDT_Grob_Sprite.lua")(BDT_Grob_Dir);
 	-- Load the script --
-	-- Check the path was entered
-	if not dir or dir=="" then
-		error(errMsg.." No directory entered");
-	else
-		-- Check end slash
-		local slash = string.sub(dir, string.len(dir)-1);
-		if slash~="/" and slash~="\\" then
-			dir = dir.."/";
-		end
+	-- Check end slash
+	local slash = string.sub(dir, string.len(dir)-1);
+	if slash~="/" and slash~="\\" then
+		dir = dir.."/";
 	end
-	local grobfilePath;
-	local grobfileFound=false;
-	if not grobfileName or not love.filesystem.exists(dir..'/'..grobfileName) then
+	local grobfilePath = dir..'/'..grobfileName;
+	local grobfileFound = false;
+	if not grobfileName or not love.filesystem.exists(grobfilePath) then
 		local love_filesystem_exists = love.filesystem.exists;
 		-- Look for grobfile
-		for i,n in ipairs(grobfileNamesToTry) do
+		for _, n in ipairs(defFileNamesToTry) do
 			grobfilePath = dir..'/'..n;
 			if love_filesystem_exists(grobfilePath) then
-				grobfileFound=true;
+				grobfileFound = true;
 				break;
 			end
 		end
@@ -1440,6 +1451,7 @@ function BDT_GROB.newWorkshop(dir, grobfileName, partialLoading)
 			error(errMsg.." No grobfile found in '"..dir.."'");
 		end
 	end
+
 	-- Parses the file to a function
 	local readDefFile = love.filesystem.load(grobfilePath);
 	local def = {};
@@ -1468,6 +1480,9 @@ function BDT_GROB.newWorkshop(dir, grobfileName, partialLoading)
 		drawPoints = Grob__drawPoints;
 	}
 	ProtoGrob.__index = ProtoGrob;
+	ProtoGrob.__tostring = function()
+		return "BDT_Grob.Grob"
+	end
 	ProtoGrob.name = def.Name;
 
 	-- Metatable for root grobs
@@ -1488,8 +1503,12 @@ function BDT_GROB.newWorkshop(dir, grobfileName, partialLoading)
 		getOffset = RootGrob__getOffset;
 		updateZ = RootGrob__updateZ;
 		getPosition = RootGrob__getPosition;
+		getPositionXY = RootGrob__getPositionXY;
 	},ProtoGrob);
 	ProtoRoot.__index = ProtoRoot;
+	ProtoRoot.__tostring = function()
+		return "BDT_Grob.RootGrob"
+	end
 
 	-- Metatable for sub grobs
 	local ProtoSub = setmetatable({
@@ -1516,16 +1535,22 @@ function BDT_GROB.newWorkshop(dir, grobfileName, partialLoading)
 		draw = SubGrob__draw;
 	},ProtoGrob);
 	ProtoSub.__index = ProtoSub;
+	ProtoSub.__tostring = function()
+		return "BDT_Grob.SubGrob"
+	end
 
 	-- Handle number of angles
+	if def.NoVisualAngles == nil then
+		error(errMsg.." NoVisualAngles not defined in"..grobfilePath);
+	end
 	ProtoGrob.noAngles = def.NoVisualAngles;
 
 	-- Handle image areas
-	if not def.ImageAreas then
-		error(errMsg.." Image area not defined in "..path);
+	if not def.ImageAreas and not def.SingleImageArea then
+		error(errMsg.." Image area(s) not defined in "..grobfilePath);
 	end
-	if #def.ImageAreas==1 then
-		ProtoGrob.singleImageArea = def.ImageAreas[1]
+	if def.SingleImageArea then
+		ProtoGrob.singleImageArea = def.SingleImageArea;
 		ProtoSub.getImageArea = SubGrob__getImageArea_SingleArea;
 		ProtoRoot.getImageArea = RootGrob__getImageArea_SingleArea;
 	else
@@ -1539,30 +1564,28 @@ function BDT_GROB.newWorkshop(dir, grobfileName, partialLoading)
 
 	-- Handle shades
 	if def.Shades then
-		if #def.Shades==1 then
-			ProtoGrob.singleShade = def.Shades[1]
-			ProtoRoot.getShade = RootGrob__getShade_SingleShade;
-			ProtoSub.getShade = SubGrob__getShade_SingleShade;
-		else
-			ProtoGrob.shades = def.Shades;
-			ProtoRoot.getShade = RootGrob__getShade_ShadePerSprite;
-			ProtoSub.getShade = SubGrob__getShade_ShadePerSprite;
-		end;
+		ProtoGrob.shades = def.Shades;
+		ProtoRoot.getShade = RootGrob__getShade_ShadePerSprite;
+		ProtoSub.getShade = SubGrob__getShade_ShadePerSprite;
+	elseif def.SingleShade then
+		ProtoGrob.singleShade = def.SingleShade;
+		ProtoRoot.getShade = RootGrob__getShade_SingleShade;
+		ProtoSub.getShade = SubGrob__getShade_SingleShade;
 	else
 		ProtoRoot.getShade = RootGrob__getShade_NoShade;
 		ProtoSub.getShade = SubGrob__getShade_NoShade;
 	end
-	-- else error("<GROB::newWorkshop> Shade(s) not defined in "..path);
 
 	-- Load sprite(s)
-	if(def.Sprites == nil) then
-		error(errMsg.." Sprite(s) not defined in "..path);
+	local defSpriteList = def.Sprites or def.SingleSprite;
+	if(defSpriteList == nil) then
+		error(errMsg.." Sprite(s) not defined in "..grobfilePath);
 	end;
 	ProtoGrob.sprites = {};
 	-- If partial loading is disabled, load sprites now.
 	local imagesToLoad;
 	if not partialLoading then
-		for index,spriteDef in ipairs(def.Sprites) do
+		for index,spriteDef in ipairs(defSpriteList) do
 			local pic = love.graphics.newImage(dir..spriteDef.path);
 			if(pic==nil) then
 				error(errMsg.." Failed to load sprite "..spritePath);
@@ -1574,7 +1597,7 @@ function BDT_GROB.newWorkshop(dir, grobfileName, partialLoading)
 			table.insert(ProtoGrob.sprites,sprite);
 		end
 	else
-		imagesToLoad = def.Sprites;
+		imagesToLoad = def.Sprites or def.SingleSprite;
 	end
 
 	-- Return the new workshop
@@ -1591,9 +1614,9 @@ end;
 
 --------------------------------------------------------------------------------
 -- An implementation of the sorting function, using insert-sort algorithm.
--- @param t table Table of grobs.
+-- @param t : table Table of grobs.
 --------------------------------------------------------------------------------
-function BDT_GROB.zInsertSort( t )
+function BDT_Grob.zInsertSort( t )
 	local allSorted = false;
 	while not allSorted do
 		local thisPassSorted = true;
@@ -1642,13 +1665,13 @@ end;
 -- Sorts a table of grobs based on their z-index.
 -- @param t table Table of grobs.
 --------------------------------------------------------------------------------
-BDT_GROB.zSort = BDT_GROB.zInsertSort;
+BDT_Grob.zSort = BDT_Grob.zInsertSort;
 
 --------------------------------------------------------------------------------
 -- Prints children of the supplied grob; Debug utility.
 -- @param grob Grob
 --------------------------------------------------------------------------------
-function BDT_GROB.printGrobChildren(grob)
+function BDT_Grob.printGrobChildren(grob)
 	print("<Grob's children> ("..grob.name..") #:"..#grob.children);
 	for i, g in ipairs(grob.children) do
 		if g then
@@ -1657,5 +1680,5 @@ function BDT_GROB.printGrobChildren(grob)
 	end
 end
 
-	return BDT_GROB;
+	return BDT_Grob;
 end

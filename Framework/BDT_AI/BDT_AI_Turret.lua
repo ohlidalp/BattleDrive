@@ -1,10 +1,25 @@
+--------------------------------------------------------------------------------
+-- This file is part of BattleDrive project.
+-- @package BDT_AI
+-- @description Misc AI logic
+--------------------------------------------------------------------------------
+-- module("BDT_AI.BDT_AI_Turret");
 
-return function(mod,bd,bdx)
+--------------------------------------------------------------------------------
+-- @class class
+-- @name TurretAI
+-- @description Turret AI.
+--------------------------------------------------------------------------------
 
-local TurretAi = {};
-TurretAi.__index = TurretAi;
+return function(BDT_AI)
 
-function TurretAi:update(elapsed)
+local TurretAI = {};
+TurretAI.__index = TurretAI;
+
+--------------------------------------------------------------------------------
+-- @param elapsed : number Delta time in seconds
+--------------------------------------------------------------------------------
+function TurretAI:update(elapsed)
 	local gunX, gunY = self.turret:getMapPos();
 	--[[
 	console:print('TurretAI [Type:"'..tostring(self.turret.type)
@@ -74,9 +89,10 @@ function TurretAi:update(elapsed)
 	self.turret:update(elapsed);
 end;
 
-local AI = {};
-
-function AI.newTurretAI(turret, map, units)
+--------------------------------------------------------------------------------
+-- Constructor
+--------------------------------------------------------------------------------
+function BDT_AI.newTurretAI(turret, map, units)
 	return setmetatable(
 	{
 		turret = turret; -- mod_test_bdx turret object.
@@ -88,11 +104,15 @@ function AI.newTurretAI(turret, map, units)
 			y=0;
 		};
 	},
-	TurretAi);
+	TurretAI);
 end;
 
---- Draws a line from a turret to its target
-function AI.drawTargetingLines(gfxCamera)
+
+--------------------------------------------------------------------------------
+-- Draws a line from a turret to its target
+-- @param gfxCamera : GfxCamera Camera object.
+--------------------------------------------------------------------------------
+function BDT_AI.drawTargetingLines(gfxCamera)
 	--print("AI.drawTargetingLines gfxCam:",bdx.printTable(gfxCamera));
 	-- setup
 	local origColor = love.graphics.getColor();
@@ -106,7 +126,7 @@ function AI.drawTargetingLines(gfxCamera)
 			-- Check if the grob is an aimed turret
 			if( grob.unit
 					and grob.unit.ai
-					and getmetatable(grob.unit.ai)==TurretAi
+					and getmetatable(grob.unit.ai)==TurretAI
 					and grob.unit.ai.target ) then
 				-- Draw the line
 				local targetPos = grob.unit.ai.target:getTowerGrob().pos;

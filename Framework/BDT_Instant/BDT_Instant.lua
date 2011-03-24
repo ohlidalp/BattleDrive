@@ -41,50 +41,6 @@ function Instant.createFencedPhysWorld( x1, y1, x2, y2, meter, gravityX, gravity
 	return world, ground, bpTop, bpBottom, bpLeft, bpRight;
 end;
 
---- This function paints supplied map with checker pattern and 1 tile wide border
-function Instant.checkerMap( map, blackTileIndex, whiteTileIndex, edgeTileIndex )
-	map.tiles = {};
-	local iXMax = map.constants.array.w;
-	local iYMax = map.constants.array.h;
-	local iX, iY;
-	for iY = 1, iYMax, 1 do
-		map.tiles[iY] = {};
-		for iX = 1, iXMax, 1 do
-			local xi, xf = math.modf(iX/2);
-			local yi, yf = math.modf(iY/2);
-			map.tiles[iY][iX] = ( (yf~=0) == (xf~=0) ) and blackTileIndex or whiteTileIndex;
-		end;
-	end;
-	-- Top edge
-	for iX=1, iXMax, 1 do
-		map.tiles[1][iX] = edgeTileIndex;
-	end;
-	-- Bottom edge
-	for iX=1, iXMax, 1 do
-		map.tiles[iYMax][iX] = edgeTileIndex;
-	end;
-	-- Left edge
-	for iY=1, iYMax, 1 do
-		map.tiles[iY][1] = edgeTileIndex;
-	end;
-	-- Right edge
-	for iY=1, iYMax, 1 do
-		map.tiles[iY][iXMax] = edgeTileIndex;
-	end;
-
-	--[[
-	-- Debug print
-	print("[Checker map] w:", map.constants.array.w, "h:", map.constants.array.h);
-	for iy, row in ipairs(map.tiles) do
-		rowStr = "";
-		for ix, t in ipairs(row) do
-			rowStr=rowStr..t.." ";
-		end;
-		print(rowStr);
-	end;
-	--]]
-end;
-
 return Instant;
 
 end; -- End of closure

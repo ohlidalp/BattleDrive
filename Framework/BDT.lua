@@ -21,6 +21,22 @@ function BDT:loadLibrary(libName)
 end
 
 --------------------------------------------------------------------------------
+-- Checks if the two entered AABBs (Axis-Aligned Bounding Boxes) overlap.
+--------------------------------------------------------------------------------
+function BDT.aabbsOverlap(ax1,ay1,ax2,ay2,  bx1,by1,bx2,by2)
+	return
+		-- x collision
+		( ax2 > bx2
+			and (bx2>=ax1 and bx2<=ax2)
+			or  (ax2>=bx1 and ax2<=bx2) )
+		and
+		-- y collision
+		( ay2 > by2
+			and (by2>=ay1 and by2<=ay2)
+			or  (ay2>=by1 and ay2<=by2) );
+end
+
+--------------------------------------------------------------------------------
 -- Removes element(s) from table
 -- @param value mixed The object to be removed from table
 -- @param all boolean True if all occurences of given object should be removed, false if only the first occurence should be removed.

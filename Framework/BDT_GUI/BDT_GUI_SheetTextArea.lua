@@ -1,14 +1,20 @@
 --------------------------------------------------------------------------------
--- @class table
--- @name class SheetTextArea
+-- This file is part of BattleDrive project.
+-- @package BDT_GUI
+--------------------------------------------------------------------------------
+-- module("BDT_GUI.BDT_GUI_SheetTextArea");
+
+--------------------------------------------------------------------------------
+-- @class class
+-- @name SheetTextArea
 -- @description Renders text into sheet.
--- @field stream string String with the data.
--- @field align string One of LOVE's alignment constants.
--- @field sheet Table(Sheet); the Sheet to render.
--- @field color Table{r,g,b,a} Text color; Default = black.
--- @field paddingRight number Default: 5px
--- @field paddingLeft number Default: 5px
--- @field paddingTop number Default: 5px
+-- @field stream : string String with the data.
+-- @field align : string One of LOVE's alignment constants.
+-- @field sheet : Sheet the Sheet to render.
+-- @field color : Color Text color; Default = black.
+-- @field paddingRight : number Default: 5px
+-- @field paddingLeft : number Default: 5px
+-- @field paddingTop : number Default: 5px
 --------------------------------------------------------------------------------
 
 -- Optimization

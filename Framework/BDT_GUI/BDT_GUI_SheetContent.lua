@@ -1,6 +1,12 @@
 --------------------------------------------------------------------------------
--- @class table
--- @name class SheetContent
+-- This file is part of BattleDrive project.
+-- @package BDT_GUI
+--------------------------------------------------------------------------------
+-- module("BDT_GUI.BDT_GUI_SheetContent");
+
+--------------------------------------------------------------------------------
+-- @class class
+-- @name SheetContent
 -- @description Something renderable to display in the sheet
 --------------------------------------------------------------------------------
 return function (BDT_GUI) -- Enclosing function

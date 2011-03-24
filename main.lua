@@ -2,8 +2,7 @@
 ________________________________________________________________________________
 
                                                                    BattleDrive
-                                                                   Version 0.1
-                       Copyright (C) 2007-2010 Petr Ohlidal <An00biS@email.cz>
+                     Copyright (C) 2007-2011 Petr Ohlidal <An00biS@An00biS.cz>
 
 _________________________________ License ______________________________________
 
@@ -25,7 +24,7 @@ freely, subject to the following restrictions:
 
 ________________________________________________________________________________
 
-This is a menu script. It loads and inits the libraries and runs the
+This is the main script of BD. It loads and inits the libraries and runs the
 MainMenu app.
 
 ________________________________________________________________________________
@@ -51,13 +50,9 @@ function DBG_markMainTime(msg)
 end
 --]]
 
-local config = {
-	graphicsDir = "Graphics",
-	frameworkDir = "Framework",
-	gamesDir = "Programs"
-}
+local BD_Config = require "config.lua";
 
-local BD_Config = config;
+require "Libs/middleclass/middleclass.lua"
 
 function love.run()
 	--[[--#DBG_PROFILE#
@@ -71,10 +66,10 @@ function love.run()
 	local love_graphics_clear = love.graphics.clear;
 	local love_graphics_present = love.graphics.present;
 	local love_event_poll = love.event.poll;
+	local love_mouse_getPosition = love.mouse.getPosition;
 
-	-- "loading" text
 	love_graphics.setCaption("BattleDrive");
-	love_graphics.setMode(1000,650,false,false,0);
+	love_graphics.setMode(BD_Config.screenWidth, BD_Config.screenHeight, false, false, 0);
 	love_graphics_clear();
 	local font12 = love.graphics.newFont(12);
 	love_graphics.setFont(font12);
@@ -88,11 +83,12 @@ function love.run()
 	print = function(...)
 	    logStream:write(...);
 	    logStream:write("\n");
-	end--]]
+	end
+	--]]
 
 	-- Load libs
-	BDT = require (config.frameworkDir.."/BDT.lua");
-	BDT:init(config.frameworkDir);
+	BDT = require (BD_Config.frameworkDir.."/BDT.lua");
+	BDT:init(BD_Config.frameworkDir);
 	BDT_GUI = BDT:loadLibrary("GUI");
 
 	-- Define global app variables.
@@ -101,13 +97,16 @@ function love.run()
 	BD_ActiveApp = false;
 
 	local newMainMenuApp = require "BD_MainMenuApp.lua";
-	BD_MenuApp = newMainMenuApp(config);
+	BD_MenuApp = newMainMenuApp(BD_Config);
 	BD_MenuApp:initialize();
 	BD_ActiveApp = BD_MenuApp;
+	BD_Exit = false;
+
+	local mouseX, mouseY, mouseOldX, mouseOldY = 0,0,0,0;
 
 	local dt = 0;
 	-- Main event loop
-	while true do
+	while not BD_Exit do
 		-- Alias
 		local app = BD_ActiveApp;
 
@@ -119,6 +118,13 @@ function love.run()
 		-- Draw
 		love_graphics_clear();
 		app:draw();
+
+		-- Emulate mouse-move event
+		mouseX, mouseY = love_mouse_getPosition();
+		if mouseX ~= mouseOldX or mouseY ~= mouseOldY then
+			app:mouseMoved(mouseX, mouseY, mouseOldX, mouseOldY);
+		end
+		mouseOldX, mouseOldY = mouseX, mouseY;
 
 		-- Handle events
 		for evType, a,b,c,d in love_event_poll() do

@@ -1,19 +1,27 @@
 --------------------------------------------------------------------------------
+-- This file is part of BattleDrive project.
+-- @package BDT_GUI
+--------------------------------------------------------------------------------
+--module("BDT_GUI.BDT_GUI_Palette")
+
+--- @package BDT_GUI
+
+--------------------------------------------------------------------------------
 -- @class table
--- @name class Palette
+-- @name Palette
 -- @description Colors for BDT_GUI's default renderer.
--- @field outlineTopLeft
--- @field outlineBottomRight
--- @field fill
--- @field mouseoverFill
--- @field mouseoverOutlineTopLeft
--- @field mouseoverOutlineBottomRight
--- @field mousedownFill
--- @field mousedownOutlineTopLeft
--- @field mousedownOutlineBottomRight
--- @field inactiveOutline
--- @field inactiveFill
--- @field role enum{"page","label"}
+-- @field outlineTopLeft : Color
+-- @attr outlineBottomRight : Color
+-- @attr fill : Color
+-- @attr mouseoverFill : Color
+-- @attr mouseoverOutlineTopLeft : Color
+-- @attr mouseoverOutlineBottomRight: Color
+-- @attr mousedownFill : Color
+-- @attr mousedownOutlineTopLeft : Color
+-- @attr mousedownOutlineBottomRight : Color
+-- @attr inactiveOutline : Color
+-- @attr role : string One of ["page"|"label"], where label is a leafSheet.
+-- @attr inactiveFill : Color
 --------------------------------------------------------------------------------
 
 local function deepcopy(object)

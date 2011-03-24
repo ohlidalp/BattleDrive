@@ -53,6 +53,21 @@ Methods:
 	+ getSpeed() : Number
 
 --]]
+
+--[[ Example spec:
+	speed=0;
+	maxForwardSpeed=300, -- Pixels per sec.
+	rotationSpeed=80; -- Degrees per sec.
+	-- Speed units to add in a secod of time
+	forwardAcceleration = 250;
+	reverseAcceleration = 188,
+	-- Speed units to substract in a second of time
+	forwardSlowdown = 50,
+	reverseBrake = 133, -- Positive number
+	maxReverseSpeed = -178, -- Must be a negative number
+	reverseSlowdown = 50,
+	forwardBrake = 133,
+--]]
 --------------------------------- Utilities ------------------------------------
 
 -- Check if a table matches the GrobCompatible interface
@@ -110,6 +125,16 @@ function PUBLIC.newTrackedUndercart(
 		goLeftKey = goLeftKey,
 		goRightKey = goRightKey
 	}, TrackedUndercart);
+end
+
+function PUBLIC.newTrackedUndercartFromSpec(grob, spec, controls, smoothSteering)
+	return PUBLIC.newTrackedUndercart(grob,
+		spec.maxForwardSpeed, spec.maxReverseSpeed,
+		spec.forwardAcceleration, spec.reverseAcceleration,
+		spec.forwardSlowdown, spec.reverseSlowdown,
+		spec.forwardBrake, spec.reverseBrake,
+		controls.goForwardKey, controls.goBackwardKey, controls.goLeftKey, controls.goRightKey,
+		spec.rotationSpeed, smoothSteering);
 end
 
 function TrackedUndercart:keyPressed(k)

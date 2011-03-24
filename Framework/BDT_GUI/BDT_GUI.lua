@@ -26,22 +26,22 @@ freely, subject to the following restrictions:
 
 ________________________________ Description ___________________________________
 
-Provides a very basic GUI logic. It's not intended to be a full-feature GUI
-toolkit, just to help with creating custom game interfaces.
-
-Architecture:
-	The Desk object is the GUI manager and root of widget hierarchy. Only one
-	such object is needed. It has to be passed events through callback, plus
-	emulating the 'mouseMoved' callbac, which LOVE hasn't, but it's implemented
-	for efficiency.
-
+--------------------------------------------------------------------------------
+-- @package BDT_GUI
 ________________________________________________________________________________
 --]]
 
+--module("BDT_GUI.BDT_GUI");
+
 --------------------------------------------------------------------------------
--- @class table
--- @name BDT_GUI module interface
+-- @class package
+-- @name BDT_GUI
 -- @description Provides a very basic GUI logic; It's not intended to be a full-feature GUI toolkit, just to help with creating custom game interfaces.
+-- Architecture:<ul>
+--	<li>The Desk object is the GUI manager and root of widget hierarchy. Only one
+--	such object is needed. It has to be passed events through callback, plus
+--	emulating the 'mouseMoved' callbac, which LOVE hasn't, but it's implemented
+--	for efficiency.</li>
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -140,7 +140,7 @@ function BDT_GUI.removeAllSheets(self)
 	end
 end
 
-BDT_GUI.newCallbackList = require (BDT_GUI_Dir.."/BDT_GUI_CallbackList.lua");
+require (BDT_GUI_Dir.."/BDT_GUI_CallbackList.lua") (BDT_GUI);
 require (BDT_GUI_Dir.."/BDT_GUI_Arrangement.lua") (BDT_GUI);
 require (BDT_GUI_Dir.."/BDT_GUI_Sheet.lua") (BDT_GUI);
 require (BDT_GUI_Dir.."/BDT_GUI_SheetRenderer.lua") (BDT_GUI);
@@ -150,9 +150,11 @@ require (BDT_GUI_Dir.."/BDT_GUI_SheetTextArea.lua") (BDT_GUI);
 require (BDT_GUI_Dir.."/BDT_GUI_Palette.lua") (BDT_GUI);
 require (BDT_GUI_Dir.."/BDT_GUI_Desk.lua") (BDT_GUI);
 require (BDT_GUI_Dir.."/BDT_GUI_Util.lua") (BDT_GUI);
-require (BDT_GUI_Dir.."/BDT_GUI_Shorthands.lua") (BDT_GUI);
-
+local widgetsDir = BDT_GUI_Dir..'/widgets';
+require (widgetsDir.."/BDT_GUI_Widgets.lua") (BDT_GUI, widgetsDir);
+require (widgetsDir.."/StatusMarker.lua") (BDT_GUI, widgetsDir);
 
 
 return BDT_GUI;
 end -- Enclosing function
+

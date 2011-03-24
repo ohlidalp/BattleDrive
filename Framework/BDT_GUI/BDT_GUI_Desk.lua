@@ -1,12 +1,18 @@
 --------------------------------------------------------------------------------
--- @class table
--- @name class Desk
+-- This file is part of BattleDrive project.
+-- @package BDT_GUI
+--------------------------------------------------------------------------------
+--module("BDT_GUI.BDT_GUI_Desk");
+
+--------------------------------------------------------------------------------
+-- @class class
+-- @name Desk
 -- @description A Desk object is a root element of the sheet hierarchy; Also serves as a GUI manager object.
--- @field buttons Table; Buttons pressed above the currently pointed sheet
--- @field buttons.right Boolean; tells if right mouse button is pressed
--- @field buttons.middle Boolean; tells if middle mouse button is pressed
--- @field buttons.left Boolean; tells if left mouse button is pressed
--- @field pointedSheet BDT_GUI.Sheet Sheet currently hovered by mouse.
+-- @field buttons : Table Buttons pressed above the currently pointed sheet
+-- @field buttons.right : Boolean tells if right mouse button is pressed
+-- @field buttons.middle : Boolean tells if middle mouse button is pressed
+-- @field buttons.left : Boolean tells if left mouse button is pressed
+-- @field pointedSheet : Sheet Sheet currently hovered by mouse.
 --------------------------------------------------------------------------------
 
 return function( BDT_GUI ) -- enclosing function
@@ -27,13 +33,13 @@ end
 -- @param oldY Old mouse coordinate in pixels
 --------------------------------------------------------------------------------
 function Desk:mouseMoved( newX, newY, oldX, oldY )
-	--print("<desk:mousemoved>====\n old x:"..oldX.." y:"..oldY.." new x:"..newX.." y:"..newY);
+	-- print("DBG Desk:mouseMoved() old x:"..oldX.." y:"..oldY.." new x:"..newX.." y:"..newY);
 	local lastPointedSheet = self.pointedSheet;
 	if( lastPointedSheet
 			and (self.buttons.left or self.buttons.right or self.buttons.middle) ) then
 		--OBSOLETE-PRE-EVENT self.pointedSheet.onDrag:call( newX, newY, oldX, oldY, self.buttons );
 		lastPointedSheet:dragEvent(newX,newY,oldX,oldY,self.buttons)
-	end;
+	end
 
 	-- Iterate child sheets. Break if pointed sheet is found
 	local nowPointedSheet;
@@ -43,8 +49,8 @@ function Desk:mouseMoved( newX, newY, oldX, oldY )
 		--	..tostring(nowPointedSheet));
 		if( nowPointedSheet ~= nil ) then
 			break;
-		end;
-	end;
+		end
+	end
 	--[[--#DBG#
 	print("IN BDT_GUI.Desk:mouseMoved() "
 		.." new[ X:"..tostring(newX).." Y:"..tostring(newY)
@@ -72,7 +78,7 @@ function Desk:mouseMoved( newX, newY, oldX, oldY )
 	end
 
 	return self.pointedSheet;
-end;
+end
 
 --------------------------------------------------------------------------------
 -- Mouse button press or mouse wheel turn callback.
@@ -88,12 +94,12 @@ function Desk:mousePressed( x, y, button )
 			self.buttons.right = true;
 		else
 			self.buttons.middle = true;
-		end;
+	end
 		-- Notify the pointed sheet
 		--OLD self.pointedSheet.onMouseDown:call( x, y, button );
 		self.pointedSheet:mouseDownEvent();
-	end;
-end;
+	end
+end
 
 --------------------------------------------------------------------------------
 -- Mouse button release callback.
@@ -109,12 +115,12 @@ function Desk:mouseReleased( x, y, button )
 			self.buttons.right = false;
 		else
 			self.buttons.middle = false;
-		end;
+	end
 		-- Notify the pointed sheet
 		--OLD self.pointedSheet.onMouseUp:call( x, y, button );
 		self.pointedSheet:mouseUpEvent();
-	end;
-end;
+	end
+end
 --------------------------------------------------------------------------------
 -- Draws the GUI
 --------------------------------------------------------------------------------
@@ -122,19 +128,29 @@ function Desk:draw()
 	-- Draw child sheets
 	for index, sheet in ipairs(self.sheets) do
 		sheet:draw();
-	end;
-end;
+	end
+end
 
 --------------------------------------------------------------------------------
 -- Attaches a sheet into the tree.
 -- @param s Sheet The sheet.
 --------------------------------------------------------------------------------
-function Desk:attachSheet(s)
+function Desk:attachChild(s)
 	if not BDT_GUI.isInstanceOfSheet(s) then
 		error("ERROR: Desk:attachSheet(): Supplied object ["..tostring(s).."] is not a Sheet");
 	end
 	table.insert(self.sheets,s);
+	s.parent = self;
+	s.relativePos.x = s.absolutePos.x - self.absolutePos.x;
+	s.relativePos.y = s.absolutePos.y - self.absolutePos.y;
 end
+
+--------------------------------------------------------------------------------
+-- Attaches a child sheet. Alias for 'attachChild'
+-- @name Desk:attachSheet
+-- @class function
+--------------------------------------------------------------------------------
+Desk.attachSheet = Desk.attachChild;
 
 function Desk:detachSheet(s)
 
@@ -165,7 +181,7 @@ Desk.removeSheet = BDT_GUI.removeSheet;
 
 --------------------------------------------------------------------------------
 -- Fetches the Sheet which mouse currently points to
--- @return table
+-- @return : Sheet
 --------------------------------------------------------------------------------
 function Desk:getPointedSheet()
 	return self.pointedSheet;
@@ -186,13 +202,16 @@ function BDT_GUI.newDesk()
 			right=false;
 			middle=false;
 			left=false;
-		};
-
-		-- True if the currently pointed sheet should be dragged
-		-- Is set by dragPointedSheet() method.
+		},
+		relativePos = {
+			x=0,
+			y=0
+		},
+		w = love.graphics.getWidth(),
+		h = love.graphics.getHeight()
 	},
 	Desk
 	);
-end;
+end
 
-end; -- End of enclosing function
+end -- End of enclosing function

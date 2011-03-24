@@ -1,21 +1,28 @@
 --------------------------------------------------------------------------------
--- @class table
--- @name class Sheet
+-- This file is part of BattleDrive project.
+-- @package BDT_GUI
+--------------------------------------------------------------------------------
+--module("BDT_GUI.BDT_GUI_Sheet");
+
+--------------------------------------------------------------------------------
+-- @class class
+-- @name Sheet
 -- @description Sheet is an universal container; It is movable and scalable, can create hierarchies; Can serve as a window, panel, button, scrollbar, whatever...
--- @field relativePos Table {x,y} - Position relative to parent sheet (in pixels)
--- @field absolutePos Table {x,y} - Sheet's position relative to it's ancestor node; The coordinates are always relative to top left corner, no matter how the sheet is anchored.
--- @field anchor Table { horizontal, vertical } - This sheet's anchors. Defaults: TOP, LEFT
+-- @field relativePos : Coordinates Position relative to parent sheet (in pixels)
+-- @field absolutePos : Coordinates Sheet's position relative to it's ancestor node; The coordinates are always relative to top left corner, no matter how the sheet is anchored.
+-- @field anchor : Table{horizontal,vertical} This sheet's anchors. Defaults: TOP, LEFT
 -- @field anchor.horizontal edges.LEFT or edges.RIGHT
 -- @field anchor.vertical edges.TOP or edges.BOTTOM
--- @field onMouseOver Table(CallbackList)
--- @field onMouseOut Table(CallbackList)
--- @field onMouseDown Table(CallbackList)
--- @field onMouseUp Table(CallbackList)
--- @field onDrag Table(CallbackList)
--- @field renderer Table(SheetRenderer)
--- @field mouseIsOver Boolean - Flags if mouse is hovering this sheet.
--- @field mouseIsDown Boolean - Flags if mouse is being pressed above this sheet.
--- @field parentChanged Function - Callback which updates this sheet's position and size if parent element was somehow changed.
+-- @field onMouseOver : CallbackList
+-- @field onMouseOut : CallbackList
+-- @field onMouseDown : CallbackList
+-- @field onMouseUp : CallbackList
+-- @field onDrag : CallbackList
+-- @field renderer : CallbackList
+-- @field mouseIsOver : Boolean Flags if mouse is hovering this sheet.
+-- @field mouseIsDown : Boolean Flags if mouse is being pressed above this sheet.
+-- @field parentChanged : Function Callback which updates this sheet's position and size if parent element was somehow changed.
+-- @field sheets : List{Sheet} Child sheets.
 -- @field name string Sheet name
 --------------------------------------------------------------------------------
 
@@ -23,13 +30,16 @@ return function( BDT_GUI ) -- Enclosing function
 
 local Sheet = {};
 Sheet.__index = Sheet;
---[[Sheet.__tostring = function()
+Sheet.__tostring = function()
 	return "BDT_GUI.Sheet";
-end]]
+end
+function Sheet:toString()
+	return "BDT_GUI.Sheet["..tostring(self.name).."]"
+end
 
 --------------------------------------------------------------------------------
 -- Registers an event handler with this sheet.
--- @param eventType number Item of BDT_GUI.events enum
+-- @param eventType : number Item of BDT_GUI.events enum
 -- @param handler Either a function or a table with "run" method; When executed, the value gets the sheet as argument.
 --------------------------------------------------------------------------------
 function Sheet:addEventHandler(eventType,handler)
@@ -51,9 +61,9 @@ end
 
 --------------------------------------------------------------------------------
 -- Unregisters an event handler with this sheet.
--- @param eventType number Item of BDT_GUI.events enum
+-- @param eventType : number Item of BDT_GUI.events enum
 -- @param handler The handler object/function to remove
--- @return boolean True if the object was removed, false if not found
+-- @return : boolean True if the object was removed, false if not found
 --------------------------------------------------------------------------------
 function Sheet:removeEventHandler(eventType,handler)
 	local events = BDT_GUI.events;
@@ -74,8 +84,8 @@ end
 
 --------------------------------------------------------------------------------
 -- Notifies this sheet that a mouse button was pressed above it.
--- @param x Mouse screen position
--- @param y Mouse screen position
+-- @param x : number Mouse screen position
+-- @param y : number Mouse screen position
 -- @param button The button.
 --------------------------------------------------------------------------------
 function Sheet:mouseDownEvent(  x, y, button )
@@ -85,11 +95,11 @@ function Sheet:mouseDownEvent(  x, y, button )
 		else
 			value( self.sheet, x, y, button );
 		end
-	end;
+ end
 	if self.renderer then
 		self.renderer:mouseEvent(true,true);
 	end
-end;
+end
 
 --------------------------------------------------------------------------------
 -- Notifies this sheet that a mouse button was released above it.
@@ -100,11 +110,11 @@ end;
 function Sheet:mouseUpEvent(  x, y, button )
 	for index, callbackFunction in ipairs( self.onMouseUp:getList() ) do
 		callbackFunction( self.sheet, x, y, button );
-	end;
+ end
 	if self.renderer then
 		self.renderer:mouseEvent(true,false);
 	end
-end;
+end
 
 --------------------------------------------------------------------------------
 -- Notifies this sheet that a mouse was positioned above it.
@@ -117,7 +127,7 @@ function Sheet:mouseOverEvent(  )
 		self.renderer:mouseEvent(true,false);
 	end
 	self.onMouseOver:call();
-end;
+end
 
 --------------------------------------------------------------------------------
 -- Notifies this sheet that a mouse was removed from it.
@@ -127,7 +137,7 @@ function Sheet:mouseOutEvent(  )
 	if self.renderer then
 		self.renderer:mouseEvent(false,false);
 	end
-end;
+end
 
 --------------------------------------------------------------------------------
 -- Notifies this sheet that it was mouse-dragged.
@@ -138,10 +148,11 @@ end;
 -- @param buttons table{left,middle,right}
 --------------------------------------------------------------------------------
 function Sheet:dragEvent(  mouseNewX, mouseNewY, mouseOldX, mouseOldY, buttons )
+	-- print(string.format("DBG Sheet:dragEvent x:%d y:%d oldX:%d oldY:%d",mouseNewX, mouseNewY, mouseOldX, mouseOldY));
 	for index, callbackFunction in ipairs( self.onDrag:getList() ) do
-		callbackFunction( self.sheet, mouseNewX, mouseNewY, mouseOldX, mouseOldY, buttons );
-	end;
-end;
+		callbackFunction( self, mouseNewX, mouseNewY, mouseOldX, mouseOldY, buttons );
+ end
+end
 
 function Sheet:setName(n)
    self.name=n;
@@ -160,8 +171,8 @@ function BDT_GUI._newUnattachedSheet(
 			vertical = _verticalAnchor or BDT_GUI.edges.LEFT;
 		};
 		relativePos = {
-			x = _relativePosX;
-			y = _relativePosY;
+			x = 0;
+			y = 0;
 		};
 		absolutePos = {
 			x = absoluteX;
@@ -188,7 +199,7 @@ function BDT_GUI._newUnattachedSheet(
 	setmetatable( sheet, Sheet );
 
 	return sheet;
-end;
+end
 
 --
 -- Creates new sheet as a child of the current sheet/desk
@@ -208,8 +219,7 @@ function BDT_GUI._newSheet(parent,
 	local s = BDT_GUI._newUnattachedSheet(
 		absPosX, absPosY, w, h, parentChangedFn,
 		horizontalAnchor, verticalAnchor, active);
-	table.insert(parent.sheets, 1, s);
-	s.parent = parent;
+	parent:attachChild(s);
 	return s;
 end
 
@@ -229,7 +239,7 @@ end
 function BDT_GUI.newSheet(
 		absoluteX, absoluteY, w, h, parentChangedFn,
 		horizontalAnchor, verticalAnchor, active)
-	BDT_GUI._newUnattachedSheet(absoluteX, absoluteY, w, h, parentChangedFn,
+	return BDT_GUI._newUnattachedSheet(absoluteX, absoluteY, w, h, parentChangedFn,
 		horizontalAnchor, verticalAnchor, active);
 end
 
@@ -290,26 +300,26 @@ function Sheet:mouseMoved( mouseNewX, mouseNewY, mouseOldX, mouseOldY )
 		local pointed = sheet:mouseMoved( mouseNewX, mouseNewY, mouseOldX, mouseOldY );
 		if( pointed ~= nil) then
 			return pointed;
-		end;
-	end;
+  end
+ end
 
 	if( (self.active==true) and (self:isInside( mouseNewX, mouseNewY )==true) ) then
 		return self;
 	else
 		return nil;
-	end;
-end;
+	end
+end
 
 --------------------------------------------------------------------------------
 -- Returns the screen positions (in pixels) of this sheet's corners.
--- @return number Top left X
--- @return number Top left Y
--- @return number Top right X
--- @return number Top right Y
--- @return number Bottom right X
--- @return number Bottom right Y
--- @return number Bottom left X
--- @return number Bottom right Y
+-- @return : number Top left X
+-- @return : number Top left Y
+-- @return : number Top right X
+-- @return : number Top right Y
+-- @return : number Bottom right X
+-- @return : number Bottom right Y
+-- @return : number Bottom left X
+-- @return : number Bottom right Y
 --------------------------------------------------------------------------------
 function Sheet:getCorners()
 	return
@@ -317,7 +327,7 @@ function Sheet:getCorners()
 		self.absolutePos.x + self.w, self.absolutePos.y,
 		self.absolutePos.x + self.w, self.absolutePos.y+self.h,
 		self.absolutePos.x, self.absolutePos.y + self.h;
-end;
+end
 
 --------------------------------------------------------------------------------
 -- Returns <w,h> the dimensions of this sheet (in pixels)
@@ -343,7 +353,7 @@ function Sheet:resize( horizontalChange, verticalChange, verticalEdge, horizonta
 		-- Change relative pos, update absolute pos
 		self.relativePos.x = self.relativePos.x - horizontalChange;
 		self.absolutePos.x = self.parent.absolutePos.x+self.relativePos.x;
-	end;
+ end
 
 	-- Aplly the vertical resize
 	self.h = self.h + verticalChange;
@@ -352,7 +362,7 @@ function Sheet:resize( horizontalChange, verticalChange, verticalEdge, horizonta
 		-- Change relative pos, update absolute pos
 		self.relativePos.y = self.relativePos.y - verticalChange;
 		self.absolutePos.y = self.parent.absolutePos.y+self.relativePos.y;
-	end;
+ end
 
 	-- Distribute the change
 	-- elements have top/left offsets, so those bottom/right anchored
@@ -361,8 +371,8 @@ function Sheet:resize( horizontalChange, verticalChange, verticalEdge, horizonta
 		--print("<sheet:resize> func:"..tostring(sheet.parentChanged));
 		--sheet:parentChanged( 0, 0, verticalEdge, horizontalEdge );
 		sheet:parentChanged( horizontalChange, verticalChange, verticalEdge, horizontalEdge );
-	end;
-end;
+	end
+end
 
 --------------------------------------------------------------------------------
 -- Move the sheet and notify child sheets.
@@ -370,7 +380,7 @@ end;
 -- @param moveY Number - movement offset
 --------------------------------------------------------------------------------
 function Sheet:move( moveX, moveY )
-	--print("<Sheet:move> x:"..tostring(moveX).." y:"..tostring(moveY));
+	-- print("DBG Sheet:move() x:"..tostring(moveX).." y:"..tostring(moveY));
 	-- Update relative postion
 	self.relativePos.x = self.relativePos.x+moveX;
 	self.relativePos.y = self.relativePos.y+moveY;
@@ -382,9 +392,12 @@ function Sheet:move( moveX, moveY )
 	-- Forward the change
 	for index, sheet in ipairs(self.sheets) do
 		sheet:parentChanged();
-	end;
-end;
+ end
+end
 
+--------------------------------------------------------------------------------
+-- -- Invokes attached renderer, if any.
+--------------------------------------------------------------------------------
 function Sheet:draw()
 	if self.renderer then
 		self.renderer:draw(self);
@@ -392,13 +405,15 @@ function Sheet:draw()
 	-- Draw child sheets
 	for index, sheet in ipairs(self.sheets) do
 		sheet:draw();
-	end;
-end;
+ end
+end
 
+---
 function Sheet:isMouseOver()
 	return self.mouseIsOver;
 end
 
+---
 function Sheet:isMouseDown()
 	return self.mouseIsDown;
 end
@@ -416,6 +431,20 @@ function Sheet:attachRenderer(r)
 	end
 end
 
+--------------------------------------------------------------------------------
+-- Get attached renderer.
+-- @return : SheetRenderer The renderer or nil if there wasn't any
+--------------------------------------------------------------------------------
+function Sheet:detachRenderer()
+	local r = self.renderer;
+	self.renderer = nil;
+	return r;
+end
+
+--------------------------------------------------------------------------------
+-- Get attached renderer.
+-- @return : SheetRenderer The renderer or nil if there isn't any
+--------------------------------------------------------------------------------
 function Sheet:getRenderer()
 	return self.renderer;
 end
@@ -460,6 +489,16 @@ function Sheet:detach()
 end
 
 --------------------------------------------------------------------------------
+-- Attaches a child sheet to this one.
+--------------------------------------------------------------------------------
+function Sheet:attachChild(s)
+	table.insert(self.sheets, s);
+	s.parent = self;
+	s.relativePos.x = s.absolutePos.x - self.absolutePos.x;
+	s.relativePos.y = s.absolutePos.y - self.absolutePos.y;
+end
+
+--------------------------------------------------------------------------------
 -- Checks if supplied object is a Sheet
 -- @return boolean True if it's a sheet.
 --------------------------------------------------------------------------------
@@ -468,7 +507,7 @@ function BDT_GUI.isInstanceOfSheet(o)
 		"attachRenderer","draw","move","resize","getCorners","setActive")
 end
 
-end;
+end
 
 -- TRASH
 
@@ -479,14 +518,14 @@ local call = {};
 function call.mouseButtonEvent( self, x, y, button )
 	for index, callbackFunction in ipairs( self.list ) do
 		callbackFunction( self.sheet, x, y, button );
-	end;
-end;
+ end
+end
 
 function call.dragEvent( self, mouseNewX, mouseNewY, mouseOldX, mouseOldY, buttons )
 	for index, callbackFunction in ipairs( self.list ) do
 		callbackFunction( self.sheet, mouseNewX, mouseNewY, mouseOldX, mouseOldY, buttons );
-	end;
-end;
+ end
+end
 
 ]]
 
@@ -495,17 +534,17 @@ end;
 -- Callback functions which set the sheet's state (to make coloring work ok)
 local function setMouseOver( self )
 	 self.mouseIsOver = true;
-end;
+end
 local function setMouseOut( self )
 	self.mouseIsOver = false;
 	self.mouseIsDown = false;
-end;
+end
 local function setMouseDown( self )
 	self.mouseIsDown = true;
-end;
+end
 local function setMouseUp( self )
 	self.mouseIsDown = false;
-end;
+end
 ]]
 
 --[[ DEPRECATED
@@ -517,5 +556,5 @@ function Sheet:move( moveX, moveY )
 	-- Update absolute postitions
 	self.absolutePos.x = self.parent.absolutePos.x+self.relativePos.x;
 	self.absolutePos.y = self.parent.absolutePos.y+self.relativePos.y;
-end;
+end
 --]]

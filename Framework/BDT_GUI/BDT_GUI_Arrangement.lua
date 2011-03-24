@@ -1,3 +1,9 @@
+--------------------------------------------------------------------------------
+-- This file is part of BattleDrive project.
+-- @package BDT_GUI
+--------------------------------------------------------------------------------
+--module("BDT_GUI.BDT_GUI_Arrangement");
+
 -- BDT_GUI_arrange
 -- these functions define the positioning and scaling behaviour of a sheet
 -- each sheet must have one attached as 'parentChanged'
@@ -24,11 +30,11 @@ function arrange.fixedPosAndScale(
 	if( horizontalChange and BDT_GUI.edges.RIGHT == self.anchor.vertical ) then
 		-- Update relative postition
 		self.relativePos.x = self.relativePos.x + horizontalChange;
-	end;
+ end
 	if( verticalChange and BDT_GUI.edges.BOTTOM == self.anchor.horizontal ) then
 		-- Update relative position
 		self.relativePos.y = self.relativePos.y + verticalChange;
-	end;
+ end
 	-- Update absolute postitions
 	self.absolutePos.x = self.parent.absolutePos.x+self.relativePos.x;
 	self.absolutePos.y = self.parent.absolutePos.y+self.relativePos.y;
@@ -37,9 +43,9 @@ function arrange.fixedPosAndScale(
 	for index,sheet in ipairs(self.sheets) do
 		--print("<sheet:parentChanged> func:"..tostring(sheet.parentChanged));
 		sheet:parentChanged( 0, 0, verticalEdge, horizontalEdge );
-	end;
+	end
 
-end;
+end
 
 function arrange.relativePosAndScale(
 		self, horizontalChange, verticalChange, verticalEdge, horizontalEdge )
@@ -56,16 +62,14 @@ function arrange.relativePosAndScale(
 		thisSheetHorizontalChange = relativeChange*self.w;
 		self.w = self.w + thisSheetHorizontalChange;
 		self.relativePos.x = self.relativePos.x + self.relativePos.x*relativeChange;
-
-	end;
+	end
 	if( verticalChange ) then
 		-- Update relative position and size
 		local relativeChange = verticalChange/(self.parent.h-verticalChange);
 		thisSheetVerticalChange = relativeChange*self.h;
 		self.h = self.h + thisSheetVerticalChange;
 		self.relativePos.y = self.relativePos.y + self.relativePos.y*relativeChange;
-
-	end;
+	end
 	-- Update absolute postitions
 	self.absolutePos.x = self.parent.absolutePos.x+self.relativePos.x;
 	self.absolutePos.y = self.parent.absolutePos.y+self.relativePos.y;
@@ -74,8 +78,8 @@ function arrange.relativePosAndScale(
 		sheet:parentChanged(
 			thisSheetHorizontalChange, thisSheetVerticalChange,
 			verticalEdge, horizontalEdge );
-	end;
-end;
+	end
+end
 
 -- Modified BDT_GUI:sheet:parentChanged function
 -- makes position relative.
@@ -94,7 +98,7 @@ function arrange.relativePosFixedScale(
 		self.relativePos.x = self.relativePos.x + (self.relativePos.x*relativeChange)
 			+(self.w/2)*relativeChange;
 
-	end;
+	end
 	if( verticalChange ) then
 		-- Update relative position and size
 		local relativeChange = verticalChange/(self.parent.h-verticalChange);
@@ -102,15 +106,15 @@ function arrange.relativePosFixedScale(
 		self.relativePos.y = self.relativePos.y + (self.relativePos.y*relativeChange)
 			+(self.h/2)*relativeChange;
 
-	end;
+	end
 	-- Update absolute postitions
 	self.absolutePos.x = self.parent.absolutePos.x+self.relativePos.x;
 	self.absolutePos.y = self.parent.absolutePos.y+self.relativePos.y;
 	-- Forward the change (sheets must update absolute positions)
 	for index,sheet in ipairs(self.sheets) do
 		sheet:parentChanged( 0, 0, verticalEdge, horizontalEdge );
-	end;
-end;
+ end
+end
 
 -- Modified BDT_GUI:sheet:parentChanged function, makes it scale along with the parent sheet.
 function arrange.fixedPosLinkedScale(
@@ -118,11 +122,11 @@ function arrange.fixedPosLinkedScale(
 	if( horizontalChange and BDT_GUI.edges.RIGHT == self.anchor.vertical ) then
 		-- Update relative postition
 		self.relativePos.x = self.relativePos.x + horizontalChange;
-	end;
+	end
 	if( verticalChange and BDT_GUI.edges.BOTTOM == self.anchor.horizontal ) then
 		-- Update relative position
 		self.relativePos.y = self.relativePos.y + verticalChange;
-	end;
+	end
 	-- Update absolute postitions
 	self.absolutePos.x = self.parent.absolutePos.x+self.relativePos.x;
 	self.absolutePos.y = self.parent.absolutePos.y+self.relativePos.y;
@@ -132,8 +136,8 @@ function arrange.fixedPosLinkedScale(
 	-- Forward the change (sheets must update absolute positions)
 	for index,sheet in ipairs(self.sheets) do
 		sheet:parentChanged( horizontalChange, verticalChange, verticalEdge, horizontalEdge );
-	end;
-end;
+	end
+end
 
 
 function arrange.fixedPosRelativeScale(
@@ -152,7 +156,7 @@ function arrange.fixedPosRelativeScale(
 		self.w = self.w + thisSheetHorizontalChange;
 		--self.relativePos.x = self.relativePos.x + self.relativePos.x*relativeChange;
 
-	end;
+	end
 	if( verticalChange and verticalChange ~= 0 ) then
 		-- Update relative position and size
 		local relativeChange = verticalChange/(self.parent.h-verticalChange);
@@ -160,7 +164,7 @@ function arrange.fixedPosRelativeScale(
 		self.h = self.h + thisSheetVerticalChange;
 		--self.relativePos.y = self.relativePos.y + self.relativePos.y*relativeChange;
 
-	end;
+	end
 	-- Update absolute postitions
 	self.absolutePos.x = self.parent.absolutePos.x+self.relativePos.x;
 	self.absolutePos.y = self.parent.absolutePos.y+self.relativePos.y;
@@ -169,25 +173,25 @@ function arrange.fixedPosRelativeScale(
 		sheet:parentChanged(
 			thisSheetHorizontalChange, thisSheetVerticalChange,
 			verticalEdge, horizontalEdge );
-	end;
-end;
+	end
+end
 
 -- Creates a custom arrangement function from individual X and Y functions
 function arrange.custom( changeXFunction, changeYFunction )
 	if (type(changeXFunction) ~= "function") then
-		changeXFunction = function() end;
-	end;
+		changeXFunction = function() end
+	end
 	if (type(changeYFunction) ~= "function") then
-		changeYFunction = function() end;
-	end;
+		changeYFunction = function() end
+	end
 	return function( self, changeX, changeY, edgeX, edgeY )
 		local childChangeX = changeXFunction( self, changeX, edgeX );
 		local childChangeY = changeYFunction( self, changeY, edgeY );
 		for index,sheet in ipairs(self.sheets) do
 			sheet:parentChanged( childChangeX, childChangeY, edgeX, edgeY );
-		end;
-	end;
-end;
+	end
+	end
+end
 
 arrange.x = {};
 arrange.y = {};
@@ -202,21 +206,21 @@ function arrange.x.fixedPosAndScale( self, change, edge )
 	if( change and change~=0 and BDT_GUI.edges.RIGHT == self.anchor.vertical ) then
 		-- Update relative postition
 		self.relativePos.x = self.relativePos.x + change;
-	end;
+	end
 	-- Update absolute postitions
 	self.absolutePos.x = self.parent.absolutePos.x+self.relativePos.x;
 	-- Return nil - child sheets only have to update their absolute positions
-end;
+end
 
 function arrange.y.fixedPosAndScale( self, change, edge )
 	if( change and change~=0 and BDT_GUI.edges.BOTTOM == self.anchor.horizontal ) then
 		-- Update relative postition
 		self.relativePos.y = self.relativePos.y + change;
-	end;
+	end
 	-- Update absolute postitions
 	self.absolutePos.y = self.parent.absolutePos.y+self.relativePos.y;
 	-- Return nil - child sheets only have to update their absolute positions
-end;
+end
 
 ---- Relative pos and scale ----
 
@@ -228,23 +232,25 @@ function arrange.x.relativePosAndScale( self, change, edge )
 		thisSheetChange = relativeChange*self.w;
 		self.w = self.w + thisSheetChange
 		self.relativePos.x = self.relativePos.x + self.relativePos.x*relativeChange;
-	end;
+	end
 	self.absolutePos.x = self.parent.absolutePos.x+self.relativePos.x;
 	return thisSheetChange;
-end;
+end
 
 function arrange.y.relativePosAndScale( self, change, edge )
+	-- print(string.format("DBG arrange.y.relativePosAndScale() arg:%s, self.relativePos.y:%s, self.parent.absolutePos.y:%s", tostring(change), tostring(self.relativePos.y), tostring(self.parent.absolutePos.y)));
 	local thisSheetChange;
-	if( change and change~=0 ) then
+	if change and change~=0 then
 		-- Update relative postition and size
 		local relativeChange = change/(self.parent.h-change);
 		thisSheetChange = relativeChange*self.h;
 		self.h = self.h + thisSheetChange
 		self.relativePos.y = self.relativePos.y + self.relativePos.y*relativeChange;
-	end;
+	end
+	-- Update absolute pos
 	self.absolutePos.y = self.parent.absolutePos.y+self.relativePos.y;
 	return thisSheetChange;
-end;
+end
 
 ---- Relative pos fixed scale ----
 
@@ -254,10 +260,10 @@ function arrange.x.relativePosFixedScale( self, change, edge )
 		local relativeChange = change/(self.parent.w-change);
 		self.relativePos.x = self.relativePos.x + (self.relativePos.x*relativeChange)
 			+(self.w/2)*relativeChange;
-	end;
+	end
 	self.absolutePos.x = self.parent.absolutePos.x+self.relativePos.x;
 	-- return nil
-end;
+end
 
 function arrange.y.relativePosFixedScale( self, change, edge )
 	if( change and change~=0 ) then
@@ -265,10 +271,10 @@ function arrange.y.relativePosFixedScale( self, change, edge )
 		local relativeChange = change/(self.parent.h-change);
 		self.relativePos.y = self.relativePos.y + (self.relativePos.y*relativeChange)
 			+(self.h/2)*relativeChange;
-	end;
+	end
 	self.absolutePos.y = self.parent.absolutePos.y+self.relativePos.y;
 	-- return nil
-end;
+end
 
 ---- Absolute pos, linked scale ----
 
@@ -276,25 +282,25 @@ function arrange.x.fixedPosLinkedScale( self, change, edge )
 	if( change and change~=0 and BDT_GUI.edges.RIGHT == self.anchor.vertical ) then
 		-- Update relative postition
 		self.relativePos.x = self.relativePos.x + change;
-	end;
+	end
 	-- Update absolute postition
 	self.absolutePos.x = self.parent.absolutePos.x+self.relativePos.x;
 	-- Update scale
 	self.w = self.w+(change or 0);
 	return change;
-end;
+end
 
 function arrange.y.fixedPosLinkedScale( self, change, edge )
 	if( change and change~=0 and BDT_GUI.edges.BOTTOM == self.anchor.horizontal ) then
 		-- Update relative postition
 		self.relativePos.y = self.relativePos.y + change;
-	end;
+	end
 	-- Update absolute postition
 	self.absolutePos.y = self.parent.absolutePos.y+self.relativePos.y;
 	-- Update scale
 	self.h = self.h+(change or 0);
 	return change;
-end;
+end
 
 ---- Fixed pos, relative scale
 
@@ -306,10 +312,10 @@ function arrange.x.fixedPosRelativeScale( self, change, edge )
 		thisSheetChange = relativeChange*self.w;
 		self.w = self.w + thisSheetChange;
 		--self.relativePos.x = self.relativePos.x + self.relativePos.x*relativeChange;
-	end;
+	end
 	self.absolutePos.x = self.parent.absolutePos.x+self.relativePos.x;
 	return thisSheetChange;
-end;
+end
 
 function arrange.y.fixedPosRelativeScale( self, change, edge )
 	local thisSheetChange;
@@ -319,11 +325,11 @@ function arrange.y.fixedPosRelativeScale( self, change, edge )
 		thisSheetChange = relativeChange*self.h;
 		self.h = self.h + thisSheetChange;
 
-	end;
+	end
 	self.absolutePos.y = self.parent.absolutePos.y+self.relativePos.y;
 	return thisSheetChange;
-end;
+end
 
 BDT_GUI.arrangement = arrange;
 
-end; -- End of closure
+end -- End of closure

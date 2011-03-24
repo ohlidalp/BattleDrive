@@ -1,9 +1,15 @@
 --------------------------------------------------------------------------------
--- @class table
--- @name class CallbackList
+-- This file is part of BattleDrive project.
+-- @package BDT_GUI
+--------------------------------------------------------------------------------
+--module("BDT_GUI.BDT_GUI_CallbackList");
+
+--------------------------------------------------------------------------------
+-- @class class
+-- @name CallbackList
 -- @description Keeps a list of executable values for a given sheet event.
--- @field list Table; The list of callable values.
--- @field sheet Table(Sheet); The Sheet object this callback list belongs to
+-- @field list : Table The list of callable values.
+-- @field sheet : Sheet The Sheet object this callback list belongs to
 --------------------------------------------------------------------------------
 
 local CallbackList = {};
@@ -26,7 +32,7 @@ end;
 
 --------------------------------------------------------------------------------
 -- Removes a value "fn" from the list
--- @return boolean True if the object was removed, false if not found
+-- @return : boolean True if the object was removed, false if not found
 --------------------------------------------------------------------------------
 function CallbackList:remove( fn )
 	for index, func in ipairs(self.list) do
@@ -40,7 +46,7 @@ end;
 
 --------------------------------------------------------------------------------
 -- Executes all values in the order they were added; Each executed value recieves the sheet as argument
--- @return Table(Sheet); The associated sheet (to allow chaining operations)
+-- @return : Sheet The associated sheet (to allow chaining operations)
 --------------------------------------------------------------------------------
 function CallbackList:call()
 	for index, val in ipairs(self.list) do
@@ -55,18 +61,20 @@ end;
 
 --------------------------------------------------------------------------------
 -- Fetches a list of registered handlers
--- @return table List of callbacks.
+-- @return : table List of callbacks.
 --------------------------------------------------------------------------------
 function CallbackList:getList()
 	return self.list;
 end
 
+return function (BDT_GUI)
+
 --------------------------------------------------------------------------------
 -- Constructs a new CallbackList object.
--- @param _sheet Table: The sheet to attach CallbackList to.
--- @return The CallbackList object.
+-- @param _sheet : Sheet The sheet to attach CallbackList to.
+-- @return : CallbackList
 --------------------------------------------------------------------------------
-newCallbackList = function( _sheet )
+function BDT_GUI.newCallbackList ( _sheet )
 	return setmetatable(
 	{
 		list = {};
@@ -74,6 +82,6 @@ newCallbackList = function( _sheet )
 	},
 	CallbackList
 	);
-end;
+end
 
-return newCallbackList;
+end
